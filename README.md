@@ -269,6 +269,21 @@ Simulink implementation documentation.
 
 ---
 
+## Requirements
+
+The current implementation was tested with:
+
+- MATLAB R2025b Update 2 (25.2)
+- Simulink R2025b (25.2)
+- Microsoft Windows 10 Pro
+- fixed-step discrete simulation with a sample time of 1 s
+
+No additional MATLAB toolboxes are required by the MATLAB reference EKF implementation beyond MATLAB itself. Simulink is required to open and execute the included `.slx` models.
+
+These versions describe the environment used for verification; they should not be interpreted as minimum supported versions.
+
+---
+
 ## Reproducibility
 
 A typical MATLAB workflow is:
@@ -319,6 +334,7 @@ Future work may include:
 **Jiaxing Lu**
 
 Battery modelling, testing, diagnostics, and BMS-oriented state estimation.
+
 
 
 
