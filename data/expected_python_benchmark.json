@@ -1,0 +1,17 @@
+{
+  "correct_init": {
+    "SOC_RMSE_pp": 2.445,
+    "SOC_FinalError_pp": -0.025,
+    "Voltage_RMSE_mV": 10.185
+  },
+  "minus20pp": {
+    "SOC_RMSE_pp": 2.509,
+    "SOC_FinalError_pp": -0.025,
+    "Voltage_RMSE_mV": 10.928
+  },
+  "plus15pp": {
+    "SOC_RMSE_pp": 2.455,
+    "SOC_FinalError_pp": -0.025,
+    "Voltage_RMSE_mV": 11.19
+  }
+}

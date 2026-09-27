@@ -1,0 +1,23 @@
+# Automatic text detection
+* text=auto
+
+# Text files: store with Unix LF in Git
+*.m   text eol=lf
+*.md  text eol=lf
+*.csv text eol=lf
+*.txt text eol=lf
+
+# Binary MATLAB / Simulink files
+*.mat binary
+*.slx binary
+
+# Figures / documents
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+
+# Repository configuration files
+*.json text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
