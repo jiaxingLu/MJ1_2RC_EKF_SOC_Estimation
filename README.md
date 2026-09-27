@@ -44,52 +44,52 @@ Current sign convention:
 
 The state vector is
 
-\[
+$$
 x =
 \begin{bmatrix}
 v_1 \\
 v_2 \\
 SOC
 \end{bmatrix}
-\]
+$$
 
 with discrete-time dynamics
 
-\[
+$$
 v_{1,k+1}=a_1v_{1,k}+b_1I_k
-\]
+$$
 
-\[
+$$
 v_{2,k+1}=a_2v_{2,k}+b_2I_k
-\]
+$$
 
-\[
+$$
 SOC_{k+1}=SOC_k+\frac{I_k\Delta t}{3600Q_{\mathrm{ref}}}
-\]
+$$
 
 where
 
-\[
+$$
 a_i=\exp\left(-\frac{\Delta t}{R_iC_i}\right)
-\]
+$$
 
 and
 
-\[
+$$
 b_i=R_i(1-a_i)
-\]
+$$
 
 The terminal-voltage model is
 
-\[
+$$
 V_k=OCV(SOC_k)+v_{1,k}+v_{2,k}+R_0(SOC_k)I_k
-\]
+$$
 
 The parameters
 
-\[
+$$
 R_0,\;R_1,\;C_1,\;R_2,\;C_2,\;OCV
-\]
+$$
 
 are represented as SOC-dependent lookup tables.
 
@@ -101,15 +101,15 @@ The current v0.2 model is based on HPPC-derived second-order RC parameters and a
 
 The model is considered valid over approximately:
 
-\[
+$$
 SOC \in [17\%,85\%]
-\]
+$$
 
 The validation interval used for the EKF benchmark is approximately:
 
-\[
+$$
 SOC: 50\% \rightarrow 17\%
-\]
+$$
 
 The OCV map used in this project is an empirical pseudo-OCV surrogate rather than a fully relaxed equilibrium OCV curve.
 
@@ -119,9 +119,9 @@ The OCV map used in this project is an empirical pseudo-OCV surrogate rather tha
 
 The EKF estimates the three states:
 
-\[
+$$
 [v_1,\;v_2,\;SOC]^T
-\]
+$$
 
 using measured current and terminal voltage.
 
@@ -135,23 +135,23 @@ The implementation includes:
 
 Reference tuning in the current implementation:
 
-\[
+$$
 Q = \mathrm{diag}(10^{-7},10^{-7},10^{-9})
-\]
+$$
 
-\[
+$$
 \sigma_V = 20\ \mathrm{mV}
-\]
+$$
 
-\[
+$$
 R = \sigma_V^2
-\]
+$$
 
 with
 
-\[
+$$
 \Delta t = 1\ \mathrm{s}
-\]
+$$
 
 ---
 
@@ -321,3 +321,4 @@ Future work may include:
 **Jiaxing Lu**
 
 Battery modelling, testing, diagnostics, and BMS-oriented state estimation.
+
