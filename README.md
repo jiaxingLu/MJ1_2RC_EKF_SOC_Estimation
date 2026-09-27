@@ -1,10 +1,25 @@
-﻿# MJ1 2RC EKF SOC Estimation
+# MJ1 2RC EKF SOC Estimation
 
 Experimentally parameterised second-order Thevenin equivalent-circuit model and Extended Kalman Filter (EKF) for lithium-ion battery State-of-Charge (SOC) estimation.
 
 The project is based on LG INR18650 MJ1 cell test data and provides a reproducible workflow from parameterised 2RC modelling to MATLAB/Simulink EKF implementation and validation.
 
 This repository extends the earlier [MJ1 2RC Thevenin Model Validation](https://github.com/jiaxingLu/MJ1_2RC_Thevenin_Model_Validation) project from fixed-SOC HPPC-based local 2RC validation to an SOC-dependent ECM and EKF-based SOC estimation framework.
+
+---
+
+## Key Results
+
+- SOC-dependent second-order Thevenin ECM identified for approximately **17–85% SOC**
+- EKF evaluated on a held-out experimental discharge segment covering approximately **50% → 17% SOC**
+- Correct-initialisation SOC RMSE: **2.445 pp**
+- EKF terminal-voltage RMSE: **10.182 mV**
+- Tested initial-SOC offsets: **−20 pp** and **+15 pp**
+- Final SOC error for all three tested initialisation cases: approximately **−0.025 pp**
+- Simulink 2RC plant holdout voltage RMSE: **17.351 mV**
+- MATLAB implementation agrees with the frozen Python reference within approximately **0.0002 pp** in SOC metrics and **0.003 mV** in voltage RMSE
+
+> The initial-SOC mismatch results apply only to the tested dataset and should not be interpreted as a general convergence guarantee.
 
 ---
 
