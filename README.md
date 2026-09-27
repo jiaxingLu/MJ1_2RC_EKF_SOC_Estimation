@@ -101,15 +101,11 @@ The current v0.2 model is based on HPPC-derived second-order RC parameters and a
 
 The model is considered valid over approximately:
 
-$$
-SOC \in [17\%,85\%]
-$$
+**17–85% SOC**
 
 The validation interval used for the EKF benchmark is approximately:
 
-$$
-SOC: 50\% \rightarrow 17\%
-$$
+**50% SOC → 17% SOC**
 
 The OCV map used in this project is an empirical pseudo-OCV surrogate rather than a fully relaxed equilibrium OCV curve.
 
@@ -321,4 +317,6 @@ Future work may include:
 **Jiaxing Lu**
 
 Battery modelling, testing, diagnostics, and BMS-oriented state estimation.
+
+
 
