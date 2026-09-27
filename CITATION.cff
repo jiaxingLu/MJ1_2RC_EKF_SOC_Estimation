@@ -1,0 +1,33 @@
+﻿cff-version: 1.2.0
+message: "If you use this software or model in your work, please cite this repository."
+title: "MJ1 2RC EKF SOC Estimation"
+type: software
+
+authors:
+  - family-names: "Lu"
+    given-names: "Jiaxing"
+
+version: 0.2.0
+date-released: 2026-09-27
+
+repository-code: "https://github.com/jiaxingLu/MJ1_2RC_EKF_SOC_Estimation"
+url: "https://github.com/jiaxingLu/MJ1_2RC_EKF_SOC_Estimation"
+
+abstract: >-
+  Experimentally parameterised SOC-dependent second-order Thevenin
+  equivalent-circuit model and Extended Kalman Filter for lithium-ion battery
+  State-of-Charge estimation. The implementation is based on LG INR18650 MJ1
+  experimental data and includes MATLAB and Simulink validation against a
+  held-out discharge segment.
+
+keywords:
+  - lithium-ion battery
+  - state of charge
+  - SOC estimation
+  - extended Kalman filter
+  - EKF
+  - battery management system
+  - equivalent circuit model
+  - Thevenin model
+  - MATLAB
+  - Simulink
