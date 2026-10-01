@@ -1,79 +1,69 @@
-# MJ1 2RC–EKF: validation scope and archived evidence
+# Experimental validation and implementation verification
 
-[中文报告](A8c_validation_report_zh.md) · [Candidate decision](A8c_candidate_decision.md) · [Reproduction guide](A8c_reproduction.md) · [Claim–evidence matrix](A8c_claim_evidence.md)
+[Project overview](../../README.md) · [Model-selection analysis](A8c_candidate_decision.md) · [Reproduction guide](A8c_reproduction.md)
 
-## Outcome
+## Summary
 
-The original SOC-dependent two-RC EKF remains the default baseline. The archived A8b test passed output-parity tolerances between the MATLAB implementation and the saved Simulink observer for **one 1 s, −3.4 A constant-current discharge record and three initial-SOC conditions**. The fixed `Tau2FixedR2` candidate was not adopted as the default; online parameter updating was not enabled. The archived deployment status remains `NOT_RELEASED`.
+The SOC-dependent 2RC-EKF was evaluated on an experimental LG INR18650 MJ1 discharge record and implemented in both MATLAB and Simulink. The archived runtime comparison confirms agreement of the specified outputs across three initial-SOC conditions. The baseline model is retained after evaluating a fixed slow-time-constant correction against dynamic-response and SOC-estimation metrics.
 
-Publishing this validation record is not a production-release decision. This directory is an evidence addition to `MJ1_2RC_EKF_SOC_Estimation`, not a replacement implementation or a new model version. Source status files are retained unchanged: A8a's static-only status precedes A8b's runtime test.
+## Test configuration
 
-Sources: [A8a status](../../results/validation/A8c/A8a_status.csv), [A8b status](../../results/validation/A8c/A8b_status.csv), [A7a candidate evidence](A8c_candidate_decision.md).
-
-## Test specification
-
-| Item | Archived definition |
+| Item | Specification |
 |---|---|
-| State order | `[v1, v2, SOC]`; voltages in V and SOC as a fraction |
+| States | `[v1, v2, SOC]`; voltage in V, SOC as a fraction |
 | Current sign | Positive charge, negative discharge |
 | Reference capacity | 3.335 Ah |
-| Frozen LUT SOC interval | 17–85% |
-| Input record | 1165 points, 0–1164 s, fixed 1 s spacing, −3.4 A |
-| Reference SOC | Approximately 49.988339% → 17.024821%; Coulomb-counting based |
-| Initial offsets | 0, −20 and +15 percentage points relative to the same initial reference |
-| Outputs compared | SOC, posterior terminal voltage and voltage innovation |
+| Lookup-table range | 17-85% SOC |
+| Input | 1165 samples over 0-1164 s; 1 s sampling; -3.4 A |
+| Reference SOC | Approximately 49.988339% to 17.024821%; Coulomb-counting based |
+| Initial SOC offsets | 0, -20 and +15 percentage points |
+| Outputs compared | SOC, posterior terminal voltage, voltage innovation |
 | Inputs compared | Logged current and measured terminal voltage |
-| First sample | Initialized output, not a measurement correction; retained in the comparison |
-| Scope of runtime | Normal Simulink simulation; no output interpolation, time shift or first-sample removal |
+| Initial sample | Initialized output, retained without a measurement correction |
+| Runtime | Normal Simulink simulation; no output resampling or time alignment |
 
-The three initializations reuse one record. They are not independent experiments. The MATLAB environment archived with A8a is `25.2.0.3055257 (R2025b) Update 2` on `PCWIN64`. Cross-platform numerical identity is not established. Exact settings and provenance are recorded in [scope and settings](../../results/validation/A8c/A8c_scope_and_settings.json) and [provenance](../../results/validation/A8c/A8c_provenance.json).
+The initializations reuse one experimental record. The documented runtime environment is MATLAB R2025b Update 2 on Windows 64-bit. Full settings are available in [test configuration](../../results/validation/A8c/A8c_scope_and_settings.json).
 
-## Numerical implementation parity
+## State-estimation results
 
-The preceding A8a audit recorded **40/40 passed baseline-reproduction checks**. A8b recorded **15/15 passed signal checks**: five signals for each initial condition. Runtime maxima are shown below; re-reading decimal CSV exports may change only their last reported digits.
+| Initial condition | Initial SOC [%] | SOC RMSE [pp] | Posterior-voltage RMSE [mV] |
+|---|---:|---:|---:|
+| Correct initialization | 49.988339 | 2.445155 | 10.181881 |
+| -20 pp offset | 29.988339 | 2.508752 | 10.925093 |
+| +15 pp offset | 64.988339 | 2.455045 | 11.186954 |
 
-| Initial case | Max SOC difference [pp] | Max posterior-voltage difference [mV] | Max innovation difference [mV] |
-|---|---|---|---|
-| correct_init | 7.616e-12 | 1.625e-10 | 1.563e-10 |
-| minus20pp | 6.043e-10 | 5.422e-09 | 5.315e-09 |
-| plus15pp | 7.250e-11 | 1.230e-10 | 1.208e-10 |
+These SOC errors are relative to the existing Coulomb-counting reference. Full-record metrics include the initial error. Each trajectory contains 34 samples at the 17% lower SOC bound, so the final error of approximately -0.024821 pp is not an unconstrained convergence measure.
 
-The prespecified output-parity tolerances were `1e-6 pp` for SOC and `1e-5 mV` for posterior voltage and innovation; the time-alignment tolerance was `1e-9 s`. These are numerical reproduction tolerances, not measurement uncertainty or battery accuracy targets. All recorded time differences and both input-signal differences were zero. The outputs agree within tolerance, not bit-for-bit.
+Sources: [baseline metrics](../../results/validation/A8c/A8a_baseline_metrics.csv), [reference arrays](../../results/validation/A8c/A8c_holdout_reference.csv).
 
-Sources: [A8a checks](../../results/validation/A8c/A8a_regression_checks.csv), [A8b signal checks](../../results/validation/A8c/A8b_signal_checks.csv), [A8b summary](../../results/validation/A8c/A8b_summary.csv). The [comparison trace](../../results/validation/A8c/A8b_trace.csv) contains both implementations at every archived sample.
+## Implementation agreement
 
-## Estimation error is a different quantity
+The baseline regression passed 40 checks. The MATLAB-Simulink comparison passed 15 signal checks: three estimator outputs and two inputs for each initial condition.
 
-Implementation difference compares `SOC_Simulink − SOC_MATLAB`. Estimation error here compares `SOC_estimated − SOC_reference`, where the reference is the existing Coulomb-counting definition. Very small implementation differences do not reduce the latter error.
+| Initial condition | Maximum SOC difference [pp] | Maximum posterior-voltage difference [mV] | Maximum innovation difference [mV] |
+|---|---:|---:|---:|
+| Correct initialization | 7.616e-12 | 1.625e-10 | 1.563e-10 |
+| -20 pp offset | 6.043e-10 | 5.422e-09 | 5.315e-09 |
+| +15 pp offset | 7.250e-11 | 1.230e-10 | 1.208e-10 |
 
-| Initial case | Initial SOC [%] | SOC RMSE vs reference [pp] | Posterior voltage RMSE [mV] |
-|---|---|---|---|
-| correct_init | 49.988339 | 2.445155 | 10.181881 |
-| minus20pp | 29.988339 | 2.508752 | 10.925093 |
-| plus15pp | 64.988339 | 2.455045 | 11.186954 |
+The specified tolerances were `1e-6 pp` for SOC, `1e-5 mV` for posterior voltage and innovation, and `1e-9 s` for sample timing. Input and timestamp differences were zero. These thresholds evaluate numerical implementation agreement, not sensor uncertainty or battery-state accuracy. Decimal CSV decoding can affect the smallest reported differences without changing the pass result.
 
-Each trajectory contains **34 samples at the 17% SOC lower bound**. A final error near −0.024821 pp therefore cannot serve as independent evidence of unconstrained convergence. First-sample initialization error remains included in full-record SOC metrics.
+Sources: [regression checks](../../results/validation/A8c/A8a_regression_checks.csv), [signal checks](../../results/validation/A8c/A8b_signal_checks.csv), [comparison traces](../../results/validation/A8c/A8b_trace.csv).
 
-Sources: [baseline metrics](../../results/validation/A8c/A8a_baseline_metrics.csv), [Simulink summary](../../results/validation/A8c/A8b_summary.csv), [exported original reference](../../results/validation/A8c/A8c_holdout_reference.csv).
+## Parameter-selection study
 
-## Candidate-parameter decision
+A fixed candidate increased the slow-branch time constant while holding `R2` constant. In cross-pair time-domain evaluation, it reduced the primary 10-tau complex-response error but increased the primary 1-tau error. In the existing EKF benchmark, posterior-voltage error decreased while reference-SOC RMSE increased slightly across all nine candidate-scale/initialization combinations.
 
-A7a examined a fixed increase of the slow-branch time constant, keeping `R2` fixed and scaling `C2`. The archived replay improved 10τ complex-response error on both primary pairs but worsened their 1τ response. In the original EKF regression, all nine candidate/initialization combinations increased SOC RMSE slightly while reducing posterior-voltage RMSE.
+The original parameter mapping is therefore retained. The [model-selection analysis](A8c_candidate_decision.md) reports the applied scales, separate frequency results, and estimator trade-off. The candidate study is offline; it does not implement recursive parameter estimation.
 
-The candidate is retained as an offline diagnostic, not applied to the default baseline. This is a finding for this candidate, objective and dataset; it is not evidence that every adaptive estimator fails. See the [decision record](A8c_candidate_decision.md) for paired numbers and the distinction between time-domain scales and pooled EKF scales.
+## Coverage
 
-## Coverage limits
+The constant-current input cannot distinguish every previous/current-input indexing error because `I[k-1] = I[k]`. The runtime comparison directly checks the three outputs and two inputs, not the complete covariance matrix or both internal RC states.
 
-**Input timing:** constant current gives `I[k−1] = I[k]`. This test cannot distinguish certain previous/current-input indexing errors; a saved use of `IPrev` is not a variable-current runtime test.
+The tests do not establish independent SOC ground truth, variable-step operation, temperature or aging generalization, or hardware performance. Forward-model DC-AC response tests and EKF SOC accuracy are separate evaluations. See [validation coverage](A8c_claim_evidence.md) for the evidence available for each claim.
 
-**Internal variables:** A8b directly compared three outputs and two inputs. The complete covariance matrix and both RC state traces were not directly logged and compared between implementations.
+## Data and reproduction
 
-**Physical validity and deployment:** no independent SOC ground truth, nonuniform sampling, cross-cell/temperature generalization, DC–AC EKF SOC-accuracy validation, deployment-code validation or hardware qualification is established by this runtime test. Forward-model DC–AC checks and EKF output parity are separate evidence categories.
+The [evidence directory](../../results/validation/A8c/README.md) contains original numerical exports, trace comparisons, and processed reference arrays. The archived machine-readable deployment state remains `NOT_RELEASED`; it records the scope of the original tests, not whether documentation is publicly available.
 
-**Archive scope:** the public addition includes processed outputs, selected reference arrays and documentation. Full model/SLX snapshots, original raw experiment files, path-containing manifests and compilation artifacts remain in the original local audit folders. Their absence here does not authorize broader claims about unarchived runs.
-
-## Reproduction and status
-
-Run `python tools/verify_a8c_evidence.py` from the overlay or merged repository root to verify packaged hashes, recorded check results, exported parity traces, baseline metrics and candidate-tradeoff arithmetic. This uses the Python standard library and **does not run MATLAB/Simulink**. Detailed instructions and the distinction from a fresh runtime test are in the [reproduction guide](A8c_reproduction.md).
-
-Archive status: `DOCUMENTATION_AND_EVIDENCE_PACKAGED`. Limited runtime-parity status: `PASS_FOR_TESTED_1S_HOLDOUT_CASES`. Default candidate adoption: `NOT_ADOPTED`. Deployment release: `NOT_RELEASED`.
+The offline checker verifies file hashes and metric arithmetic. Re-running the original MATLAB-Simulink parity test additionally requires its audit runner and full snapshot dependencies. Instructions are in the [reproduction guide](A8c_reproduction.md), with source correspondence documented in [baseline provenance](A8c_repository_integration.md).

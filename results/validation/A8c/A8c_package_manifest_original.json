@@ -1,38 +1,31 @@
 {
   "schema": "a8c-overlay-manifest-v1",
-  "scope": "English public documentation revision. Original numerical evidence and test statuses are unchanged.",
-  "documentation_revision": {
-    "base_commit": "4ba259484332fa8de65b2a21557297f4758c2a79",
-    "previous_manifest": "results/validation/A8c/A8c_package_manifest_original.json",
-    "previous_manifest_sha256": "88837cf8045e380598d006c27398848f7c238846a138de8513f752069f0df31d",
-    "removed_document": "docs/validation/A8c_validation_report_zh.md",
-    "change_type": "Presentation only; no numerical evidence, estimator, model, or archived test status modified."
-  },
+  "scope": "documentation and processed evidence; excludes this manifest itself",
   "files": [
     {
       "path": "docs/validation/A8c_candidate_decision.md",
-      "bytes": 3270,
-      "sha256": "2d10513a697b39ab92b6d82a9c0e2c62a5f1b8eb97faf98cc9374b5c7e8a0493"
+      "bytes": 3336,
+      "sha256": "75a1f1906ef0e6a31a5e4077d8300f670d608869d0af290987485212950569fc"
     },
     {
       "path": "docs/validation/A8c_claim_evidence.md",
-      "bytes": 2535,
-      "sha256": "fe816f058b86b45c106b3b26a14d0805eff77e32b5c81eabad101687c7f35ad9"
-    },
-    {
-      "path": "docs/validation/A8c_repository_integration.md",
-      "bytes": 1680,
-      "sha256": "3796a5f8ddd39982ce9dd97e175c28b127bd0150aee9dcbbc6f47c3d2a8028e1"
+      "bytes": 3320,
+      "sha256": "2f97c9b95b50158d3ce4b5d5217259ea9b2b1d1a9cc504683c7b54e7c65c72fa"
     },
     {
       "path": "docs/validation/A8c_reproduction.md",
-      "bytes": 3191,
-      "sha256": "9d64f07c48920521815b57b4986c685059b40b9d08cd6ad77a0cf36ce583e608"
+      "bytes": 4381,
+      "sha256": "eda22e353a953412378691f62a37235d36835567d4158e3420a56dce70f25414"
     },
     {
       "path": "docs/validation/A8c_validation_report.md",
-      "bytes": 5446,
-      "sha256": "0c17a5fe3393aa60edabece22e4b57855c35ecfa7a0997bb32e227c7473730fb"
+      "bytes": 7363,
+      "sha256": "f8ddcd26183bf3a0ff5fdf642aec578ba75a474b3d36412723098dcf58583791"
+    },
+    {
+      "path": "docs/validation/A8c_validation_report_zh.md",
+      "bytes": 5212,
+      "sha256": "3274e4538ebe333edaee406281e73d5ebef9ccf9da695aed1e5cb771c8636120"
     },
     {
       "path": "results/validation/A8c/A7a_EKF_regression.csv",
@@ -100,11 +93,6 @@
       "sha256": "c2d410f195f32da873b9a893d114f2706092914446d771cf91e73b61cab192f2"
     },
     {
-      "path": "results/validation/A8c/A8c_package_manifest_original.json",
-      "bytes": 4028,
-      "sha256": "88837cf8045e380598d006c27398848f7c238846a138de8513f752069f0df31d"
-    },
-    {
       "path": "results/validation/A8c/A8c_provenance.json",
       "bytes": 4383,
       "sha256": "fc6219dc02d8ec44d9a0be8d562e171ae54141358d298bb83cdcfbe81c38f15b"
@@ -116,8 +104,8 @@
     },
     {
       "path": "results/validation/A8c/README.md",
-      "bytes": 1545,
-      "sha256": "b4230369ac57fb1bb60859388be200f650d3049b280c1a059138d4112d7158f8"
+      "bytes": 1517,
+      "sha256": "68c997c2bfaabdb1fff74e906c36163d8674478543be3f2692474b426bffd6da"
     },
     {
       "path": "tools/verify_a8c_evidence.py",

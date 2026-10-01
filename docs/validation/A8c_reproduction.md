@@ -1,53 +1,48 @@
-# Reproduction levels / 复现层级
+# Running the benchmark and checking the evidence
 
-[Validation report](A8c_validation_report.md) · [中文报告](A8c_validation_report_zh.md)
+[Project overview](../../README.md) · [Validation report](A8c_validation_report.md)
 
-## 1. Check this archived evidence without MATLAB
+## MATLAB reference benchmark
 
-From the `repo_overlay` directory, or the repository root after adding its folders, run:
+From the repository root:
 
-```text
+```matlab
+addpath(fullfile(pwd, "matlab"), fullfile(pwd, "data"))
+run("matlab/run_mj1_ekf_holdout.m")
+run("matlab/check_against_python_benchmark.m")
+```
+
+The runner uses the model and holdout data in `data/` and the estimator functions in `matlab/`. The documented execution environment is MATLAB R2025b Update 2. Simulink is needed for the `.slx` models in `model/`; see the [implementation guide](../SIMULINK_IMPLEMENTATION_PLAN.md) for their initialization and interfaces.
+
+## Offline verification of published results
+
+With Python 3.9 or later, from the repository root:
+
+```bash
 python tools/verify_a8c_evidence.py
 ```
 
-The helper requires Python 3.9 or later and its standard library only. It reads files and reports JSON; it does not modify model files, regenerate experimental data or create a new MATLAB/Simulink execution.
+The standard-library utility reads the published evidence and prints a JSON report. It checks file hashes, 40 baseline-regression checks, 15 signal checks, and the 3495-row three-case comparison trace. It also recomputes SOC and posterior-voltage RMSE, checks lower-bound occupancy, and verifies the arithmetic of the candidate-performance differences.
 
-It checks packaged file sizes and SHA-256 hashes, A8a's 40 saved check rows, A8b's 15 saved signal checks, the 3495-row trace and the three summary rows. Recomputed parity comparisons retain time order and the first sample. It also recomputes SOC and posterior-voltage RMSE against the exported original reference, confirms the 34 lower-clamped samples per case, and checks the arithmetic and directions of the candidate tradeoffs in the supplied A7a summaries.
+A successful report contains:
 
-Expected archive result:
-
-```text
-"archive_verification": "PASS_FOR_PACKAGED_EVIDENCE"
-"matlab_or_simulink_executed": false
-"deployment_release": "NOT_RELEASED"
+```json
+{
+  "archive_verification": "PASS_FOR_PACKAGED_EVIDENCE",
+  "matlab_or_simulink_executed": false
+}
 ```
 
-Decimal CSV decoding can slightly change the smallest reported differences. Passing uses the original numerical tolerances; it does not require identical last digits of exported runtime maxima. The helper verifies A7a summary arithmetic, not a fresh A7a forward-model or EKF simulation.
+The command does not execute MATLAB or Simulink and is not required to run the estimator. It verifies the archived exports rather than reproducing a new physical experiment. Small decimal-export rounding differences are assessed against the original numerical tolerances.
 
-The package manifest excludes itself. Hashes detect inconsistent packaged bytes; a manifest supplied alongside files is not an external signature or independent authentication of experimental provenance.
+## Repeating the original MATLAB-Simulink parity test
 
-## 2. Repeat the actual MATLAB/Simulink test locally
+The original runtime test used an isolated copy of the saved Simulink observer, the A8a baseline snapshot, MAT reference data, core MATLAB functions, and the `A8b_matlab_simulink_parity.m` audit runner. The full audit runner and local run-directory layout are not supplied as part of this documentation archive. Re-executing that exact test therefore requires the original audit dependencies or a separately validated repository-layout adaptation.
 
-A fresh runtime test requires the original A8a snapshot, saved SLX, MAT reference, core MATLAB functions and the actual `A8b_matlab_simulink_parity.m` runner. Preserve the original A7a, A8a and A8b result folders. Use the archived source fingerprints to distinguish this baseline from a later working copy; filenames alone are not sufficient.
+The repository contains the model and estimator implementations; the [baseline provenance record](A8c_repository_integration.md) documents their correspondence at integration. Exported comparison traces allow numerical review of the reported test without claiming that the offline checker is a replacement for simulation.
 
-The source files and binary artifacts are intentionally not duplicated in this documentation overlay. Their exact dependency layout must be retained or explicitly adapted and retested. This package does not certify a reordered repository layout or claim that the repository's present files match the fingerprints; the live repository has not been inspected or changed in this step.
+## File integrity and documentation revisions
 
-The prior A8b review ZIP omits full `SimulationOutput` MAT files, the runtime test copy and compilation outputs. These remain local audit artifacts. Re-running the optional offline helper is not a prerequisite for ordinary MATLAB use.
+`A8c_package_manifest.json` indexes the current public documentation and evidence. A presentation-only revision updates documentation hashes without modifying the original numerical CSVs, status records, or model-source fingerprints. The original manifest is retained as `A8c_package_manifest_original.json` for provenance; its document paths describe the earlier edition, not files that must exist in the current tree.
 
-## 3. Files intended for GitHub
-
-`docs/validation/` contains public-facing validation, scope, candidate-decision and reproduction documents. `results/validation/A8c/` contains selected numeric outputs, processed reference/trace data, original statuses and path-free provenance. `tools/verify_a8c_evidence.py` allows numerical checks on the archived exports.
-
-No existing root README, source code, LUT or SLX is overwritten by the overlay design. The separate README excerpt is optional. Keep any existing repository license unchanged; this package does not assign a license or make decisions about third-party code/data rights.
-
-## 4. Files to keep in the local archive
-
-Keep the original completed `results/A7a_.../`, `results/A8a_.../` and `results/A8b_.../` directories and their original review ZIPs. Those include full dependency snapshots and richer local runtime evidence. Do not replace them with the smaller public evidence overlay.
-
-Do not bulk-copy compilation caches, working SLX versions, complete raw-data folders, path-containing manifests or previous intermediate review archives into the public repository. The original A8b independent-review bundle is supplementary and is not an input to A8c.
-
-## 中文操作要点
-
-本次 A8c 不需要再运行 MATLAB，也不需要先下载 A8b 补充复核包。最终材料是“文档与证据增量”，不是完整可运行工程替代包。把 `repo_overlay` 里的 `docs`、`results`、`tools` 按相对路径合入 Phase II 仓库；不要直接用它覆盖整个仓库。原始运行目录继续保存在本地。
-
-此步骤没有执行 GitHub 写入、提交或推送。公开证据整理完成不改变 `NOT_RELEASED` 的工程发布边界。
+The active manifest excludes itself. Hashes check consistency of the listed bytes; the manifest is not an external signature or an independent authentication of experimental provenance. Original full local run directories and simulation outputs remain the source archive for a fresh runtime investigation.

@@ -1,369 +1,115 @@
 # MJ1 2RC EKF SOC Estimation
 
-Experimentally parameterised second-order Thevenin equivalent-circuit model and Extended Kalman Filter (EKF) for lithium-ion battery State-of-Charge (SOC) estimation.
+**Experimentally parameterised battery modelling and state-of-charge estimation in MATLAB and Simulink.**
 
-The project is based on LG INR18650 MJ1 cell test data and provides a reproducible workflow from parameterised 2RC modelling to MATLAB/Simulink EKF implementation and validation.
+This project combines an SOC-dependent second-order Thevenin model with an extended Kalman filter (EKF) for the LG INR18650 MJ1 lithium-ion cell. It connects HPPC-based parameterisation, measured current and voltage, state estimation, and reproducible implementation testing.
 
-This repository extends the earlier [MJ1 2RC Thevenin Model Validation](https://github.com/jiaxingLu/MJ1_2RC_Thevenin_Model_Validation) project from fixed-SOC HPPC-based local 2RC validation to an SOC-dependent ECM and EKF-based SOC estimation framework.
+The repository extends [MJ1 2RC Thevenin Model Validation](https://github.com/jiaxingLu/MJ1_2RC_Thevenin_Model_Validation) from local, fixed-SOC model validation to an SOC-dependent estimator.
 
----
+[Validation report](docs/validation/A8c_validation_report.md) · [Model-selection analysis](docs/validation/A8c_candidate_decision.md) · [Reproduction guide](docs/validation/A8c_reproduction.md)
 
-## Key Results
+## Results
 
-The original **SOC-dependent 2RC-EKF** remains the default baseline. The current LUT range is **17-85% SOC**, with a reference capacity of **3.335 Ah**.
+The reference benchmark uses a measured 1C discharge segment at **-3.4 A**, sampled every **1 s**, covering approximately **50% to 17% SOC**. Three initial-SOC conditions are evaluated on the same 1165-sample record.
 
-### Archived baseline and output parity
-
-The archived estimator benchmark uses **one 1 s, -3.4 A constant-current discharge record**, from approximately **50% to 17% SOC**. All three initialization cases replay that same record.
-
-| Initial SOC case | SOC RMSE vs Coulomb-counting reference [pp] | Posterior-voltage RMSE [mV] |
+| Initial SOC condition | SOC RMSE [pp] | Posterior-voltage RMSE [mV] |
 |---|---:|---:|
-| Correct initialization | 2.445155 | 10.181881 |
-| -20 pp | 2.508752 | 10.925093 |
-| +15 pp | 2.455045 | 11.186954 |
+| Correct initialization | **2.445** | **10.182** |
+| -20 pp offset | 2.509 | 10.925 |
+| +15 pp offset | 2.455 | 11.187 |
 
-A8a recorded **40 passing baseline-regression checks**. A8b recorded **15 passing signal checks** for MATLAB-Simulink parity: SOC, posterior voltage, innovation, and the two input signals. The full 1165-sample trace was retained in each case, without output interpolation, time shifting or first-sample deletion.
+SOC errors are measured against the experimental Coulomb-counting reference; `pp` denotes percentage points.
 
-> Implementation parity is not independent SOC accuracy. The SOC reference is Coulomb-counting-based. Each case reaches the 17% lower clamp for 34 samples, so its approximately -0.025 pp final error is not evidence of accurate unconstrained convergence. This constant-current test does not establish variable-current timing parity.
+**MATLAB-Simulink agreement:** SOC, posterior voltage, and voltage innovation agree within the specified numerical tolerances for all three initializations. The verification includes 40 baseline-regression checks and 15 signal checks, with every sample retained. Detailed tolerances and comparison traces are provided in the [validation report](docs/validation/A8c_validation_report.md#implementation-agreement).
 
-### Candidate decision
+![SOC estimation with correct initialization](figures/SOC_convergence_correct_init.png)
 
-A fixed slow-time-constant scale of approximately **1.45** was **not adopted**. It improved the primary 10-tau response but degraded the primary 1-tau response; posterior-voltage error decreased while reference-SOC error increased slightly in EKF regression. **No corresponding online parameter update is enabled.**
+[View the -20 pp test](figures/SOC_convergence_minus20pp.png) · [View the +15 pp test](figures/SOC_convergence_plus15pp.png)
 
-Read the [validation report](docs/validation/A8c_validation_report.md), [Chinese report](docs/validation/A8c_validation_report_zh.md), [candidate decision](docs/validation/A8c_candidate_decision.md), [claim-evidence matrix](docs/validation/A8c_claim_evidence.md), and [reproduction guide](docs/validation/A8c_reproduction.md).
+## Model and estimator
 
-The public archive is a **research validation milestone**, not production acceptance. Its original deployment state remains `NOT_RELEASED`. Offline evidence verification does not run MATLAB or Simulink.
+The cell model represents instantaneous voltage drop and two polarization time scales using an ohmic resistance and two parallel RC branches. OCV, resistance, and capacitance are stored as SOC-dependent lookup tables.
 
----
+| Configuration | Value |
+|---|---|
+| Cell | LG INR18650 MJ1 |
+| Nominal capacity | 3.5 Ah |
+| Model reference capacity | 3.335 Ah |
+| Lookup-table SOC interval | 17-85% |
+| Current convention | Positive for charge; negative for discharge |
+| State order | `[v1, v2, SOC]` |
+| Benchmark sampling interval | 1 s |
 
-## Project Scope
-
-This repository contains:
-
-- a SOC-dependent second-order Thevenin model,
-- RC updates with parameters held constant over each discrete step,
-- an EKF-based SOC estimator,
-- a MATLAB reference implementation,
-- Simulink plant and EKF implementations,
-- validation against a held-out experimental discharge segment,
-- initial-SOC mismatch sensitivity tests,
-- MATLAB numerical consistency check against frozen reference results generated by the Python implementation.
-
-The present version focuses on **SOC estimation**.
-
-It does **not** yet implement SOH estimation, degradation-state estimation, temperature adaptation, or aging-aware parameter evolution.
-
----
-
-## Cell and Sign Convention
-
-Cell:
-
-- LG INR18650 MJ1
-- nominal capacity: 3.5 Ah
-- reference capacity used in the current model: 3.335 Ah
-
-Current sign convention:
-
-- `I > 0`: charge
-- `I < 0`: discharge
-
----
-
-## 2RC Thevenin Model
-
-The state vector is
+For each RC branch, parameters are held constant over a discrete step:
 
 $$
-x =
-\begin{bmatrix}
-v_1 \\
-v_2 \\
-SOC
-\end{bmatrix}
+v_{i,k+1}=a_i v_{i,k}+R_i(1-a_i)I_k,
+\qquad a_i=\exp\!\left(-\frac{\Delta t}{R_iC_i}\right).
 $$
 
-with discrete-time dynamics
+SOC propagation and terminal voltage follow
 
 $$
-v_{1,k+1}=a_1v_{1,k}+b_1I_k
+SOC_{k+1}=SOC_k+\frac{I_k\Delta t}{3600Q_{\mathrm{ref}}},
 $$
 
 $$
-v_{2,k+1}=a_2v_{2,k}+b_2I_k
+V_k=OCV(SOC_k)+v_{1,k}+v_{2,k}+R_0(SOC_k)I_k.
 $$
 
-$$
-SOC_{k+1}=SOC_k+\frac{I_k\Delta t}{3600Q_{\mathrm{ref}}}
-$$
+The parameter set combines HPPC-derived RC parameters with a correction based on 0.5C steady-polarization data. The OCV map is an empirical pseudo-OCV surrogate rather than a fully relaxed equilibrium curve.
 
-where
+The EKF uses numerical Jacobians, Joseph-form covariance updates, and SOC boundary enforcement. Parameters follow the frozen SOC lookup tables; online parameter adaptation is not active.
 
-$$
-a_i=\exp\left(-\frac{\Delta t}{R_iC_i}\right)
-$$
+| EKF setting | Reference value |
+|---|---|
+| Process covariance | `diag([1e-7, 1e-7, 1e-9])` |
+| Voltage measurement covariance | `(0.020 V)^2` |
+| Initial state covariance | `diag([0.02^2, 0.02^2, 0.20^2])` |
 
-and
+## Run the MATLAB benchmark
 
-$$
-b_i=R_i(1-a_i)
-$$
+The documented test environment is MATLAB R2025b Update 2 and Simulink R2025b on Windows 10. Simulink is required for the `.slx` models; the MATLAB reference EKF uses MATLAB functions without additional toolbox dependencies.
 
-The terminal-voltage model is
+From the repository root in MATLAB:
 
-$$
-V_k=OCV(SOC_k)+v_{1,k}+v_{2,k}+R_0(SOC_k)I_k
-$$
-
-The parameters
-
-$$
-R_0,\;R_1,\;C_1,\;R_2,\;C_2,\;OCV
-$$
-
-are represented as SOC-dependent lookup tables.
-
----
-
-## Parameterisation
-
-The current v0.2 model is based on HPPC-derived second-order RC parameters and a small correction using 0.5C steady-polarisation information.
-
-The model is considered valid over approximately:
-
-**17–85% SOC**
-
-The validation interval used for the EKF benchmark is approximately:
-
-**50% SOC → 17% SOC**
-
-The OCV map used in this project is an empirical pseudo-OCV surrogate rather than a fully relaxed equilibrium OCV curve.
-
----
-
-## Extended Kalman Filter
-
-The EKF estimates the three states:
-
-$$
-[v_1,\;v_2,\;SOC]^T
-$$
-
-using measured current and terminal voltage.
-
-The implementation includes:
-
-- nonlinear SOC-dependent lookup tables,
-- numerical Jacobians,
-- Joseph-form covariance update,
-- SOC boundary enforcement,
-- RC state propagation with parameters held constant over each discrete step.
-
-Reference tuning in the current implementation:
-
-$$
-Q = \mathrm{diag}(10^{-7},10^{-7},10^{-9})
-$$
-
-$$
-\sigma_V = 20\ \mathrm{mV}
-$$
-
-$$
-R = \sigma_V^2
-$$
-
-with
-
-$$
-\Delta t = 1\ \mathrm{s}
-$$
-
----
-
-## Simulink Implementation
-
-Two verified Simulink models are included:
-
-- `MJ1_2RC_EKF_v02_S1_PlantVerified.slx`
-- `MJ1_2RC_EKF_v02_S2_Final.slx`
-
-### Stage S1 - Plant Verification
-
-The Simulink 2RC plant was verified against the MATLAB/Python reference implementation.
-
-Holdout voltage-model result:
-
-| Metric | Result |
-|---|---:|
-| Voltage RMSE | 17.351 mV |
-| Mean residual | -14.171 mV |
-| Maximum absolute residual | 22.898 mV |
-
-The Simulink and Python results differ by approximately 0.002 mV in voltage RMSE.
-
-### Stage S2 - EKF Validation
-
-The EKF was evaluated using three SOC initialisation cases.
-
-| Case | SOC RMSE [pp] | SOC MAE [pp] | Max abs. error [pp] | Final SOC error [pp] | Voltage RMSE [mV] |
-|---|---:|---:|---:|---:|---:|
-| Correct initial SOC | 2.445 | 2.374 | 2.868 | -0.025 | 10.182 |
-| Initial SOC -20 pp | 2.509 | 2.385 | 20.000 | -0.025 | 10.925 |
-| Initial SOC +15 pp | 2.455 | 2.349 | 15.000 | -0.025 | 11.187 |
-
-`pp` denotes percentage points.
-
-The tested initial-SOC mismatch cases converge to essentially the same long-term trajectory.
-
-This result should not be interpreted as universal convergence behaviour outside the tested dataset and model range.
-
----
-
-## Python-MATLAB Consistency
-
-The MATLAB implementation was checked against a frozen Python benchmark.
-
-Typical discrepancies are on the order of:
-
-- approximately 0.0002 percentage points in SOC metrics,
-- approximately 0.003 mV in voltage RMSE.
-
-The frozen benchmark is stored in:
-
-`data/expected_python_benchmark.json`
-
----
-
-## Validation Figures
-
-### Correct Initial SOC
-
-![Correct initial SOC](figures/SOC_convergence_correct_init.png)
-
-### Initial SOC -20 Percentage Points
-
-![Initial SOC minus 20 pp](figures/SOC_convergence_minus20pp.png)
-
-### Initial SOC +15 Percentage Points
-
-![Initial SOC plus 15 pp](figures/SOC_convergence_plus15pp.png)
-
----
-
-## Repository Structure
-
-~~~text
-MJ1_2RC_EKF_SOC_Estimation/
-├── data/
-├── docs/
-├── figures/
-├── matlab/
-├── model/
-├── results/
-├── scripts/
-├── .gitattributes
-├── .gitignore
-└── README.md
-~~~
-
-### `data/`
-
-Model LUTs, MATLAB model data, holdout dataset, and frozen Python benchmark.
-
-### `matlab/`
-
-MATLAB EKF implementation, state-transition and measurement functions, Jacobians, interpolation utilities, and benchmark checking.
-
-### `model/`
-
-Verified Simulink plant and EKF models.
-
-### `results/`
-
-Numerical EKF validation metrics and time-domain traces.
-
-### `figures/`
-
-SOC-estimation validation figures.
-
-### `scripts/`
-
-Post-processing and validation-summary generation scripts.
-
-### `docs/`
-
-Simulink implementation documentation.
-
----
-
-## Requirements
-
-The current implementation was tested with:
-
-- MATLAB R2025b Update 2 (25.2)
-- Simulink R2025b (25.2)
-- Microsoft Windows 10 Pro
-- fixed-step discrete simulation with a sample time of 1 s
-
-No additional MATLAB toolboxes are required by the MATLAB reference EKF implementation beyond MATLAB itself. Simulink is required to open and execute the included `.slx` models.
-
-These versions describe the environment used for verification; they should not be interpreted as minimum supported versions.
-
----
-
-## Reproducibility
-
-A typical MATLAB workflow is:
-
-~~~matlab
-addpath("matlab")
-
-load("data/mj1_v02_model.mat")
-load("data/mj1_holdout_50to17.mat")
-
+```matlab
+addpath(fullfile(pwd, "matlab"), fullfile(pwd, "data"))
 run("matlab/run_mj1_ekf_holdout.m")
 run("matlab/check_against_python_benchmark.m")
-~~~
+```
 
-The Simulink models use a 1 s fixed-step discrete configuration.
+The benchmark reports estimation metrics and produces SOC and voltage comparisons. Simulink models are provided separately in `model/`; their initialization and signal interfaces are described in the [implementation guide](docs/SIMULINK_IMPLEMENTATION_PLAN.md).
 
----
+The published comparison data can also be checked without MATLAB using Python 3.9 or later:
 
-## Current Limitations
+```bash
+python tools/verify_a8c_evidence.py
+```
 
-The present version has several deliberate boundaries:
+This command verifies file integrity and recomputes the archived metrics; it does not execute the Simulink models. See the [reproduction guide](docs/validation/A8c_reproduction.md) for the distinction between numerical evidence checks and fresh simulation runs.
 
-- validation is limited to the current LG MJ1 experimental dataset,
-- model use should remain within approximately 17-85% SOC,
-- the reported EKF holdout validation covers approximately 50-17% SOC,
-- the OCV map is a pseudo-OCV surrogate,
-- no explicit temperature dependence is included,
-- no aging-dependent parameter adaptation is included,
-- no SOH or degradation-state estimator is implemented yet.
+## Repository contents
 
----
+| Directory | Contents |
+|---|---|
+| `data/` | Model lookup tables, benchmark data, and frozen Python reference |
+| `matlab/` | EKF, state and measurement equations, interpolation, and Jacobians |
+| `model/` | Simulink 2RC plant and EKF observer |
+| `figures/` | SOC-estimation comparison plots |
+| `scripts/` | Validation-summary and post-processing utilities |
+| `docs/validation/` | Test methods, results, model selection, and reproduction guidance |
+| `results/validation/A8c/` | Archived metrics, reference arrays, and output-comparison traces |
+| `tools/` | Offline evidence-verification utility |
 
-## Planned Extensions
+## Validation scope
 
-Future work may include:
+The results characterize this cell dataset and the stated operating range. The Coulomb-counting reference is not an independent SOC measurement, and implementation agreement is distinct from physical estimation accuracy. The final portion of the benchmark reaches the 17% lower SOC bound; the near-zero endpoint error is therefore not used as a convergence result.
 
-- temperature-dependent ECM parameters,
-- aging-dependent parameter evolution,
-- adaptive process and measurement covariance,
-- SOH / SoX estimation,
-- observer robustness analysis,
-- coupling with experimentally derived degradation indicators.
-
----
+The current runtime comparison covers fixed-step, constant-current operation. Variable-current timing, temperature and aging generalization, and embedded deployment are outside the demonstrated scope. Supporting analyses and individual test boundaries are documented in [validation coverage](docs/validation/A8c_claim_evidence.md).
 
 ## Author
 
-**Jiaxing Lu**
+**Jiaxing Lu** — battery testing, modelling, diagnostics, and BMS-oriented state estimation.
 
-Battery modelling, testing, diagnostics, and BMS-oriented state estimation.
-
-
-
-
-
+For data terms, see [DATA_LICENSE.md](DATA_LICENSE.md).

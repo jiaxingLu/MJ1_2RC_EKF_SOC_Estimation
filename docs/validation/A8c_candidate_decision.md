@@ -1,40 +1,47 @@
-# A7a fixed-candidate decision / 固定候选采用决定
+# Model selection: slow-branch time-constant correction
 
-[Main validation report](A8c_validation_report.md) · [中文报告](A8c_validation_report_zh.md)
+[Project overview](../../README.md) · [Validation report](A8c_validation_report.md)
 
-## Decision
+## Result
 
-**Do not adopt `Tau2FixedR2` as the default. Retain the original baseline and preserve the candidate as an offline diagnostic. No online adaptation is enabled by this archive.**
+The original parameter mapping is retained. A fixed increase in the slow-branch time constant improved selected low-frequency response metrics but did not improve performance across both primary excitation frequencies and the existing SOC-estimation benchmark.
 
-The decision concerns a fixed candidate in the existing data and estimator configuration. It does not establish that all adaptive algorithms are ineffective.
+## Candidate definition
 
-## Parameter meaning and comparison design
+The candidate holds `R2` fixed and sets `C2_candidate = s * C2_baseline`, giving `tau2_candidate = s * tau2_baseline`. This changes the branch dynamics without changing its steady-current resistance or the model reference capacity. Other lookup-table parameters remain unchanged.
 
-`R2` is held fixed; `C2_candidate = s × C2_baseline`, so `tau2_candidate = s × tau2_baseline`. This does not increase charge capacity. All other lookup-table parameters remain unchanged.
+In the time-domain comparison, the 0.2C+0.3C pair uses the scale fitted on 0.3C+0.7C, and conversely. The secondary 0.4C+0.6C pair uses the pooled-primary scale. Baseline and candidate share the same eligible cycles within each comparison. The separate EKF regression uses pooled-primary scales. Its coordinate labels identify the scale source, not a redefinition of the EKF SOC reference.
 
-For time-domain checks, the 0.2C+0.3C pair receives the scale trained on the 0.3C+0.7C pair, and conversely. The secondary 0.4C+0.6C pair receives the pooled-primary scale. Within each record, baseline and candidate are compared using the same eligible cycles. In the separate EKF regression, pooled-primary scales are used; coordinate names in EKF version labels denote the **scale source**, not a new SOC-reference definition. See [applied scales](../../results/validation/A8c/A7a_candidate_scales.csv).
+Source: [applied scales](../../results/validation/A8c/A7a_candidate_scales.csv).
 
-## End-anchored primary time-domain evidence
+## Cross-pair dynamic response
 
-| Pair | Frequency label | Common cycles | Applied scale | Baseline [mΩ] | Candidate [mΩ] |
-|---|---|---|---|---|---|
+The following results use the end-anchored coordinate. The last two columns are complex-response RMSE, not terminal-voltage error.
+
+| Excitation pair | Frequency label | Common cycles | Applied scale | Baseline [mOhm] | Candidate [mOhm] |
+|---|---|---:|---:|---:|---:|
 | 0.2C + 0.3C | 10tau | 14 | 1.473002 | 5.624399 | 5.105731 |
 | 0.2C + 0.3C | 1tau | 155 | 1.473002 | 1.830484 | 2.812176 |
 | 0.3C + 0.7C | 10tau | 9 | 1.450606 | 4.329118 | 2.562023 |
 | 0.3C + 0.7C | 1tau | 91 | 1.450606 | 0.928536 | 1.725752 |
 
-Units in the last two columns are complex-response RMSE, not terminal-voltage RMSE or SOC error. The two primary pairs improve at 10τ and deteriorate at 1τ in all three coordinate interpretations. The secondary case does not have identical behavior and remains separately labelled in the original summary.
+Both primary pairs improve at 10tau and deteriorate at 1tau under all three SOC-coordinate interpretations. The secondary pair behaves differently and is reported separately rather than pooled with the primary evidence. The end-anchored table is a representative view, not a demonstration that this coordinate is true SOC.
 
-Source: [all 18 time-domain summary rows](../../results/validation/A8c/A7a_TD_summary.csv). The original `Screen` field checks only complex-response and raw-voltage changes; it is not an all-metric acceptance certificate.
+Source: [time-domain results](../../results/validation/A8c/A7a_TD_summary.csv). The original `Screen` field checks only complex-response and raw-voltage changes, not all recorded metrics.
 
-## Existing EKF regression
+## SOC-estimator regression
 
-For correct initialization and the pooled end-anchored scale near 1.459015, SOC RMSE changes from **2.445155 to 2.495851 pp**, while posterior-voltage RMSE changes from **10.181881 to 9.091244 mV**. Across nine candidate-scale/initialization combinations, SOC RMSE increases approximately **0.0407–0.0507 pp**, while posterior-voltage RMSE decreases.
+For correct initialization and the pooled end-anchored scale of approximately 1.459015:
 
-These are small SOC changes on deterministic replays of one reference record, not nine independent experiments or a statistical-significance claim. They provide no demonstrated SOC benefit to offset the primary 1τ performance cost. No post-hoc loosening of a tolerance is used to convert the result into adoption.
+| Metric | Baseline | Candidate |
+|---|---:|---:|
+| SOC RMSE [pp] | 2.445155 | 2.495851 |
+| Posterior-voltage RMSE [mV] | 10.181881 | 9.091244 |
 
-Source: [A7a EKF regression](../../results/validation/A8c/A7a_EKF_regression.csv).
+Across nine candidate-scale/initialization combinations, SOC RMSE increases by approximately 0.0407-0.0507 pp while posterior-voltage RMSE decreases. These combinations replay one reference record; they are not independent experiments or evidence of statistical significance.
 
-## 中文结论
+Source: [EKF regression results](../../results/validation/A8c/A7a_EKF_regression.csv).
 
-慢时间常数修正具有跨配对的低频／差分指标收益，但没有保持两个主要配对的 1τ 表现，也没有改善原有 EKF 留出段的 SOC 指标。故不替换默认参数，不为了增加“在线自适应”标签继续放宽标准。终点锚定表仅用于展示，不代表它已被证明为真实 SOC 坐标。
+## Selection outcome
+
+The candidate provides a frequency-dependent trade-off rather than a general improvement. No SOC benefit was demonstrated to offset the primary 1tau performance cost. It remains an offline diagnostic result and is not applied to the default estimator. This outcome concerns the tested candidate and data; it is not a general conclusion about adaptive estimation.
