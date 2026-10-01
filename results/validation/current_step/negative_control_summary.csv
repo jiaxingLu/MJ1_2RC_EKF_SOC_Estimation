@@ -1,0 +1,5 @@
+Profile,DeliberateFault,SOC_MaxDifference_pp,Vpost_MaxDifference_mV,Innovation_MaxDifference_mV,StepEvents,EventsDetectingFault,NoUnexpectedPreStepDifference,MetExpectation
+Step,predict_uses_current_sample,0.110617543712122,4.78189383829175,4.91280176333841,8,8,1,1
+Step,measurement_uses_previous_sample,0.775529493100191,133.09606298791,136.132252511771,8,8,1,1
+Constant,predict_uses_current_sample,0,0,0,0,0,1,1
+Constant,measurement_uses_previous_sample,0,0,0,0,0,1,1

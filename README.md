@@ -6,7 +6,7 @@ This project combines an SOC-dependent second-order Thevenin model with an exten
 
 The repository extends [MJ1 2RC Thevenin Model Validation](https://github.com/jiaxingLu/MJ1_2RC_Thevenin_Model_Validation) from local, fixed-SOC model validation to an SOC-dependent estimator.
 
-[Validation report](docs/validation/A8c_validation_report.md) · [Model-selection analysis](docs/validation/A8c_candidate_decision.md) · [Reproduction guide](docs/validation/A8c_reproduction.md)
+[Validation report](docs/validation/A8c_validation_report.md) · [Model-selection analysis](docs/validation/A8c_candidate_decision.md) · [Reproduction guide](docs/validation/A8c_reproduction.md) · [Variable-current implementation check](docs/validation/current_step_parity.md)
 
 ## Results
 
@@ -21,6 +21,8 @@ The reference benchmark uses a measured 1C discharge segment at **-3.4 A**, samp
 SOC errors are measured against the experimental Coulomb-counting reference; `pp` denotes percentage points.
 
 **MATLAB-Simulink agreement:** SOC, posterior voltage, and voltage innovation agree within the specified numerical tolerances for all three initializations. The verification includes 40 baseline-regression checks and 15 signal checks, with every sample retained. Detailed tolerances and comparison traces are provided in the [validation report](docs/validation/A8c_validation_report.md#implementation-agreement).
+
+**Variable-current timing check:** both implementations were also exercised with a synthetic 1 s current-step schedule spanning rest, discharge, deeper discharge, charge, and a direct discharge-to-charge reversal. Across 271 samples and three initial-SOC conditions, SOC, posterior voltage, and innovation remained within the same numerical parity tolerances. All 24 transition windows passed. Two deliberately incorrect current-sample timing variants were detected at all eight current transitions while remaining invisible under a constant-current control. See the [variable-current implementation check](docs/validation/current_step_parity.md).
 
 ![SOC estimation with correct initialization](figures/SOC_convergence_correct_init.png)
 
@@ -100,13 +102,14 @@ This command verifies file integrity and recomputes the archived metrics; it doe
 | `scripts/` | Validation-summary and post-processing utilities |
 | `docs/validation/` | Test methods, results, model selection, and reproduction guidance |
 | `results/validation/A8c/` | Archived metrics, reference arrays, and output-comparison traces |
+| `results/validation/current_step/` | Synthetic step-test schedule, parity checks, traces, and negative-control evidence |
 | `tools/` | Offline evidence-verification utility |
 
 ## Validation scope
 
 The results characterize this cell dataset and the stated operating range. The Coulomb-counting reference is not an independent SOC measurement, and implementation agreement is distinct from physical estimation accuracy. The final portion of the benchmark reaches the 17% lower SOC bound; the near-zero endpoint error is therefore not used as a convergence result.
 
-The current runtime comparison covers fixed-step, constant-current operation. Variable-current timing, temperature and aging generalization, and embedded deployment are outside the demonstrated scope. Supporting analyses and individual test boundaries are documented in [validation coverage](docs/validation/A8c_claim_evidence.md).
+The runtime implementation checks cover fixed-step 1 s constant-current and synthetic variable-current step cases. The variable-current test is software-only evidence: it checks implementation timing and numerical parity, not physical SOC accuracy under a measured drive cycle. Irregular sampling, temperature and aging generalization, dynamic DC-AC SOC accuracy, and embedded deployment remain outside the demonstrated scope. Supporting analyses and individual test boundaries are documented in [validation coverage](docs/validation/A8c_claim_evidence.md) and the [variable-current implementation check](docs/validation/current_step_parity.md).
 
 ## Author
 
