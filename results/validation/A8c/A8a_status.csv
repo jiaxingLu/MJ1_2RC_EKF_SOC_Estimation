@@ -1,0 +1,2 @@
+BaselineReplay,InputFilesUnchanged,SimulinkInspection,SimulinkParity,ReleaseDecision,Message
+MATCHED_A7A_BASELINE,VERIFIED_FOR_LISTED_FILES,STATIC_ONLY_RUNTIME_PENDING,NOT_RUN,NOT_RELEASED,MATLAB baseline frozen; saved SLX requires runtime parity check.

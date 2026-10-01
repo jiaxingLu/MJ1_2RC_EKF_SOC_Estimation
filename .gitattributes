@@ -22,3 +22,7 @@
 .gitignore text eol=lf
 .gitattributes text eol=lf
 *.cff text eol=lf
+
+# A8c archived CSV bytes are hashed; preserve their original line endings.
+results/validation/A8c/*.csv -text -eol whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+tools/verify_a8c_evidence.py text eol=lf

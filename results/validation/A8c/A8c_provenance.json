@@ -1,0 +1,123 @@
+{
+  "package_type": "documentation_and_archived_evidence_overlay",
+  "project": "MJ1_2RC_EKF_SOC_Estimation",
+  "source_archives": [
+    {
+      "name": "A8a_20261001_095757_186_review.zip",
+      "sha256": "bc05c1b2807c02d6a0100f2b7493a00117ab08468c5cab237d6147bbba9530ff"
+    },
+    {
+      "name": "A8b_20261001_102448_179_review.zip",
+      "sha256": "11013b747a6f6c5b63cfbe6848c2180eb3abf853d332a353df28f7407ef07e62"
+    }
+  ],
+  "source_A7a_files": [
+    {
+      "name": "A7a_execution_status.csv",
+      "sha256": "55d0204d95edbf9d1be0ec9797420539e07d81b89ebc36ead7d4bec4749f12ce"
+    },
+    {
+      "name": "A7a_EKF_regression.csv",
+      "sha256": "6374331c558e2fbd765dd964cea382cb95c49ee3e715d0437f000a72af5842ee"
+    },
+    {
+      "name": "A7a_TD_summary.csv",
+      "sha256": "9325f83f57507130e5f869867ebbae9ce232ee695348fb7fae4f6d99f7d86ce8"
+    },
+    {
+      "name": "A7a_candidate_scales.csv",
+      "sha256": "245dbba26db82e67470329a1e519ba480555b3eb34b00237420fd19e48f9342c"
+    }
+  ],
+  "transformations": [
+    {
+      "file": "results/validation/A8c/A8a_status.csv",
+      "source_archive": "A8a_20261001_095757_186_review.zip",
+      "source_member": "A8a_status.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A8a_baseline_metrics.csv",
+      "source_archive": "A8a_20261001_095757_186_review.zip",
+      "source_member": "A8a_baseline_metrics.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A8a_regression_checks.csv",
+      "source_archive": "A8a_20261001_095757_186_review.zip",
+      "source_member": "A8a_regression_checks.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A8b_status.csv",
+      "source_archive": "A8b_20261001_102448_179_review.zip",
+      "source_member": "A8b_status.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A8b_signal_checks.csv",
+      "source_archive": "A8b_20261001_102448_179_review.zip",
+      "source_member": "A8b_signal_checks.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A8b_summary.csv",
+      "source_archive": "A8b_20261001_102448_179_review.zip",
+      "source_member": "A8b_summary.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A8b_trace.csv",
+      "source_archive": "A8b_20261001_102448_179_review.zip",
+      "source_member": "A8b_trace.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A7a_execution_status.csv",
+      "source_file": "A7a_execution_status.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A7a_EKF_regression.csv",
+      "source_file": "A7a_EKF_regression.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A7a_TD_summary.csv",
+      "source_file": "A7a_TD_summary.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A7a_candidate_scales.csv",
+      "source_file": "A7a_candidate_scales.csv",
+      "operation": "byte-identical copy"
+    },
+    {
+      "file": "results/validation/A8c/A8c_holdout_reference.csv",
+      "source_archive": "A8a_20261001_095757_186_review.zip",
+      "source_member": "A8a_baseline_reference.mat",
+      "operation": "export original data arrays at full recorded time points, 17 significant digits; no filtering, integration, resampling or time shift"
+    },
+    {
+      "file": "results/validation/A8c/A8c_archived_input_fingerprints.csv",
+      "operation": "replace host-specific paths with archive member identifiers; verify the listed hashes against supplied A8a archive bytes; no claim about the live repository"
+    }
+  ],
+  "not_included": [
+    "absolute-host-path manifests",
+    "raw complete multi-rate or DC-AC logs",
+    "MAT/SLX snapshots",
+    "SimulationOutput MAT files",
+    "Simulink compilation caches",
+    "working model copies"
+  ],
+  "decisions": {
+    "baseline": "retained",
+    "Tau2FixedR2_default_adoption": "not adopted",
+    "online_update": "not enabled",
+    "A8b_output_parity": "limited-scope pass",
+    "deployment_release": "not released"
+  },
+  "github_write_performed": false,
+  "new_matlab_simulink_execution_performed": false
+}

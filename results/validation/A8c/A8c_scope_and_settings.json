@@ -1,0 +1,50 @@
+{
+  "state_order": [
+    "v1_V",
+    "v2_V",
+    "SOC_fraction"
+  ],
+  "current_sign": "positive charge; negative discharge",
+  "frozen_Qref_Ah": 3.335,
+  "LUT_SOC_range_fraction": [
+    0.17,
+    0.85
+  ],
+  "Q_diagonal": [
+    1e-07,
+    1e-07,
+    1e-09
+  ],
+  "R_voltage_variance_V2": 0.0004,
+  "P0_diagonal": [
+    0.0004,
+    0.0004,
+    0.04000000000000001
+  ],
+  "online_parameter_adaptation": false,
+  "sample_count_per_case": 1165,
+  "sampling_interval_s": 1.0,
+  "time_range_s": [
+    0,
+    1164
+  ],
+  "input_current_A": -3.4,
+  "initial_SOC_offsets_pp": [
+    0,
+    -20,
+    15
+  ],
+  "parity_tolerances": {
+    "SOC_pp": 1e-06,
+    "posterior_voltage_mV": 1e-05,
+    "innovation_mV": 1e-05,
+    "time_s": 1e-09
+  },
+  "first_sample": "initialized output; no EKF measurement correction at first sample",
+  "environment_archived_with_A8a": {
+    "MATLABVersion": "25.2.0.3055257 (R2025b) Update 2",
+    "Release": "2025b",
+    "Computer": "PCWIN64"
+  },
+  "scope": "Archived single constant-current record and three initializations; not independent SOC-truth validation."
+}

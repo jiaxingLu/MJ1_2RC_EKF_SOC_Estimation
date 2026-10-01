@@ -1,0 +1,2 @@
+Execution,Parity,Scope,ReleaseDecision,Message
+COMPLETED,PASS_FOR_TESTED_1S_HOLDOUT_CASES,1C holdout / 1 s / three initial SOC cases,NOT_RELEASED,"No interpolation, time shift, first-sample removal or algorithm patch."

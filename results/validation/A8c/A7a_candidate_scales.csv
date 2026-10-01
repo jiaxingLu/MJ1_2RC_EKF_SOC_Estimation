@@ -1,0 +1,10 @@
+TestPair,EvidenceRole,SOC_Coordinate,ScaleFittedOn,AppliedScale
+0.2C + 0.3C,Primary,StartAnchored_Qref,0.3C + 0.7C,1.46594975341511
+0.2C + 0.3C,Primary,EndAnchored_Qref,0.3C + 0.7C,1.47300162580848
+0.2C + 0.3C,Primary,ProtocolNormalized,0.3C + 0.7C,1.46439798175241
+0.3C + 0.7C,Primary,StartAnchored_Qref,0.2C + 0.3C,1.42755448378667
+0.3C + 0.7C,Primary,EndAnchored_Qref,0.2C + 0.3C,1.45060570258888
+0.3C + 0.7C,Primary,ProtocolNormalized,0.2C + 0.3C,1.42370429357116
+0.4C + 0.6C,Secondary,StartAnchored_Qref,PooledPrimary,1.44176400708348
+0.4C + 0.6C,Secondary,EndAnchored_Qref,PooledPrimary,1.45901508821859
+0.4C + 0.6C,Secondary,ProtocolNormalized,PooledPrimary,1.43899169530593

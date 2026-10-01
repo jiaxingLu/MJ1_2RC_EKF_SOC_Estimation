@@ -1,0 +1,16 @@
+InitialCase,Signal,Samples,TimeMaxDifference_s,MaxAbsDifference,RMSDifference,FirstSampleDifference,Tolerance,Unit,Passed
+correct_init,A8b_SOC,1165,0,7.61612994892857e-12,3.06238059186445e-12,0,1e-06,pp,1
+correct_init,A8b_Vpost,1165,0,1.62536650805123e-10,3.73317977742566e-11,0,1e-05,mV,1
+correct_init,A8b_Innovation,1165,0,1.56319401867222e-10,3.64776959879546e-11,0,1e-05,mV,1
+correct_init,A8b_I_input,1165,0,0,0,0,1e-10,A,1
+correct_init,A8b_V_input,1165,0,0,0,0,1e-07,mV,1
+minus20pp,A8b_SOC,1165,0,6.04338801224458e-10,1.83106364627209e-11,0,1e-06,pp,1
+minus20pp,A8b_Vpost,1165,0,5.42232925226926e-09,1.73269488965909e-10,4.44089209850063e-13,1e-05,mV,1
+minus20pp,A8b_Innovation,1165,0,5.31485966348555e-09,1.67401683538419e-10,4.44089209850063e-13,1e-05,mV,1
+minus20pp,A8b_I_input,1165,0,0,0,0,1e-10,A,1
+minus20pp,A8b_V_input,1165,0,0,0,0,1e-07,mV,1
+plus15pp,A8b_SOC,1165,0,7.25031146231458e-11,7.08086066017008e-12,0,1e-06,pp,1
+plus15pp,A8b_Vpost,1165,0,1.23012711128467e-10,2.7649121695663e-11,0,1e-05,mV,1
+plus15pp,A8b_Innovation,1165,0,1.20792265079217e-10,2.74377558329867e-11,0,1e-05,mV,1
+plus15pp,A8b_I_input,1165,0,0,0,0,1e-10,A,1
+plus15pp,A8b_V_input,1165,0,0,0,0,1e-07,mV,1

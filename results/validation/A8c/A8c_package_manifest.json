@@ -1,0 +1,116 @@
+{
+  "schema": "a8c-overlay-manifest-v1",
+  "scope": "documentation and processed evidence; excludes this manifest itself",
+  "files": [
+    {
+      "path": "docs/validation/A8c_candidate_decision.md",
+      "bytes": 3336,
+      "sha256": "75a1f1906ef0e6a31a5e4077d8300f670d608869d0af290987485212950569fc"
+    },
+    {
+      "path": "docs/validation/A8c_claim_evidence.md",
+      "bytes": 3320,
+      "sha256": "2f97c9b95b50158d3ce4b5d5217259ea9b2b1d1a9cc504683c7b54e7c65c72fa"
+    },
+    {
+      "path": "docs/validation/A8c_reproduction.md",
+      "bytes": 4381,
+      "sha256": "eda22e353a953412378691f62a37235d36835567d4158e3420a56dce70f25414"
+    },
+    {
+      "path": "docs/validation/A8c_validation_report.md",
+      "bytes": 7363,
+      "sha256": "f8ddcd26183bf3a0ff5fdf642aec578ba75a474b3d36412723098dcf58583791"
+    },
+    {
+      "path": "docs/validation/A8c_validation_report_zh.md",
+      "bytes": 5212,
+      "sha256": "3274e4538ebe333edaee406281e73d5ebef9ccf9da695aed1e5cb771c8636120"
+    },
+    {
+      "path": "results/validation/A8c/A7a_EKF_regression.csv",
+      "bytes": 2864,
+      "sha256": "6374331c558e2fbd765dd964cea382cb95c49ee3e715d0437f000a72af5842ee"
+    },
+    {
+      "path": "results/validation/A8c/A7a_TD_summary.csv",
+      "bytes": 6060,
+      "sha256": "9325f83f57507130e5f869867ebbae9ce232ee695348fb7fae4f6d99f7d86ce8"
+    },
+    {
+      "path": "results/validation/A8c/A7a_candidate_scales.csv",
+      "bytes": 692,
+      "sha256": "245dbba26db82e67470329a1e519ba480555b3eb34b00237420fd19e48f9342c"
+    },
+    {
+      "path": "results/validation/A8c/A7a_execution_status.csv",
+      "bytes": 22,
+      "sha256": "55d0204d95edbf9d1be0ec9797420539e07d81b89ebc36ead7d4bec4749f12ce"
+    },
+    {
+      "path": "results/validation/A8c/A8a_baseline_metrics.csv",
+      "bytes": 590,
+      "sha256": "7b512ac9322d256b9a0618ff0b7db125bdae547da1eeb2da965de4c082943188"
+    },
+    {
+      "path": "results/validation/A8c/A8a_regression_checks.csv",
+      "bytes": 2751,
+      "sha256": "0abbecf5e73abdc3e271136d6aa3ff951ca55b0fdad2ca3c16cbdc3de1c4ecfa"
+    },
+    {
+      "path": "results/validation/A8c/A8a_status.csv",
+      "bytes": 256,
+      "sha256": "411a03d78146a81b039e395f38a50c291d5ab47d15dbf5ad45d4eadbc03c10c0"
+    },
+    {
+      "path": "results/validation/A8c/A8b_signal_checks.csv",
+      "bytes": 1205,
+      "sha256": "0395ad610ef82ee2d581d28c19c8f704d753947e4f2117be813545cff26a773d"
+    },
+    {
+      "path": "results/validation/A8c/A8b_status.csv",
+      "bytes": 221,
+      "sha256": "b8e80c9d1dcc800d68b38e4bfc2d00b714679cd7f9da6a734bfb46fb79c6d2fd"
+    },
+    {
+      "path": "results/validation/A8c/A8b_summary.csv",
+      "bytes": 536,
+      "sha256": "c319a2dffa3a87c5a0cbeff864056676728c6139e31d5a4f020290705229e7e5"
+    },
+    {
+      "path": "results/validation/A8c/A8b_trace.csv",
+      "bytes": 485189,
+      "sha256": "2a579cebb61202428e5ab91fca1d97ec56f09fbf118053ad0fc9c41976eaeafd"
+    },
+    {
+      "path": "results/validation/A8c/A8c_archived_input_fingerprints.csv",
+      "bytes": 1642,
+      "sha256": "3abaaaedcf78c0fdf217f02f4e001a298bbee96ec3491f8e243480a895b820c7"
+    },
+    {
+      "path": "results/validation/A8c/A8c_holdout_reference.csv",
+      "bytes": 70688,
+      "sha256": "c2d410f195f32da873b9a893d114f2706092914446d771cf91e73b61cab192f2"
+    },
+    {
+      "path": "results/validation/A8c/A8c_provenance.json",
+      "bytes": 4383,
+      "sha256": "fc6219dc02d8ec44d9a0be8d562e171ae54141358d298bb83cdcfbe81c38f15b"
+    },
+    {
+      "path": "results/validation/A8c/A8c_scope_and_settings.json",
+      "bytes": 1088,
+      "sha256": "892c3803e17f303e9fd21d4045d3a8e77494c4cda575a53179d3317cdf23cfc3"
+    },
+    {
+      "path": "results/validation/A8c/README.md",
+      "bytes": 1517,
+      "sha256": "68c997c2bfaabdb1fff74e906c36163d8674478543be3f2692474b426bffd6da"
+    },
+    {
+      "path": "tools/verify_a8c_evidence.py",
+      "bytes": 9934,
+      "sha256": "5370787bc5e255e3cc7d325cba72d40287db138e399046e2aecbadd104e33859"
+    }
+  ]
+}
