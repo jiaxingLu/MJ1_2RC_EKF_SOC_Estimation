@@ -1,0 +1,2 @@
+FinalArchitecturePass,RealConditionPass,RealCasesPass,RealCasesTotal,SensorBiasPass,BiasCasesPass,BiasCasesTotal,LockedAssetsIntegrityPass,Fast_Vhat_RMSE_Improvement_pct,Fast_FinalAlphaR0,MaxAbs_BiasDeltaAlpha
+True,True,9,9,True,9,9,True,5.37805398667748,1.01847699306922,0.0001958797541119
