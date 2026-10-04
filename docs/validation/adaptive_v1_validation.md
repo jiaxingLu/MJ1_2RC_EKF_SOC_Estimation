@@ -2,173 +2,157 @@
 
 ## Scope
 
-This document summarizes the validation of the adaptive extension of the SOC-dependent 2RC Thevenin EKF for the LG INR18650 MJ1 cell.
+This document contains the technical validation evidence for the adaptive extension of the SOC-dependent 2RC Thevenin EKF for the LG INR18650 MJ1 cell.
 
-The final candidate adds two layers around the frozen EKF baseline:
+The final v1.0 architecture adds:
 
-1. an autonomous current-based excitation detector; and
-2. a causal online Bayesian scalar update of the ohmic-resistance map,
+1. an autonomous current-based excitation gate; and
+2. a causal online Bayesian scalar update of the ohmic-resistance map.
 
-\[
-R_0^*(SOC)=\alpha_{R0}R_0(SOC).
-\]
+The frozen state-transition model and RC lookup tables are preserved.
 
-The frozen state-transition model, RC lookup tables, process covariance, and EKF covariance logic are preserved.
+The adaptive measurement-layer relationship is:
 
-## Why adaptation is gated
+`R0*(SOC) = alpha_R0 × R0(SOC)`
 
-Constant-current sensitivity analysis showed strong confounding among \(R_0\), RC parameters, voltage offset, and capacity/SOC terms. Dynamic excitation was therefore used to test identifiability before enabling online parameter learning.
+## Identifiability rationale
 
-The validated fast-excitation development condition has a measured frequency of approximately
+Constant-current sensitivity analysis showed strong confounding among R0, RC parameters, voltage offset, and capacity/SOC terms. Parameter adaptation was therefore not enabled globally.
 
-\[
-f\approx0.144\ \mathrm{Hz},
-\qquad
-T\approx6.96\ \mathrm{s}.
-\]
+Dynamic excitation was used to establish when R0 is sufficiently separable from competing effects.
 
-The historical experiment label for this record was `0.1τ`; this label is retained only as a dataset alias. Public technical descriptions use measured frequency and period.
+The fast-branch reference time constant used by the autonomous detector is approximately:
 
-The fast-branch reference time constant used by the autonomous gate is approximately
+`tau1_ref = 3.232407 s`
 
-\[
-\tau_{1,\mathrm{ref}}=3.2324\ \mathrm{s},
-\]
+which corresponds to the corner-period equivalent:
 
-giving a corner-period equivalent of
+`Tc = 2 × pi × tau1_ref = 20.309815 s`
 
-\[
-T_c=2\pi\tau_1\approx20.31\ \mathrm{s}.
-\]
+The historical experiment alias `0.1τ` corresponds to a measured fast excitation of approximately **0.144 Hz** with period approximately **6.96 s**.
 
-The detector combines a 128-s current buffer, linear detrending, a toolbox-free DFT with local frequency refinement, excitation-RMS and spectral-concentration tests, the condition \(\omega\tau_1\ge1\), and open/close hysteresis.
+## Autonomous excitation-gate validation
 
-## Online Bayesian result
+The detector uses:
 
-For the validated fast condition:
+- a 128 s rolling current buffer;
+- linear detrending;
+- a toolbox-free DFT;
+- local frequency refinement;
+- current-RMS thresholding;
+- fast-band spectral-power fraction;
+- dominant-peak concentration;
+- the fast-branch frequency criterion; and
+- three-positive / three-negative hysteresis.
 
-- gate-open fraction after warm-up: `0.998386`;
-- accepted Bayesian updates: `50`;
-- final multiplier: \(\alpha_{R0}=1.018476993\).
+Synthetic periodic validation produced:
 
-Posterior-voltage RMSE over the 20–80% SOC analysis band changed from
+- gate open: **5, 7, 10, 15, 18, 20 s**;
+- gate closed: **25, 40, 70, 700 s**.
 
-\[
-4.021863\ \mathrm{mV}
-\]
+The 20 s case was detected at approximately **19.961 s**.
 
-for the frozen EKF to
+Constant-current was verified separately because it has no finite excitation period; the gate remained closed.
 
-\[
-3.805565\ \mathrm{mV}
-\]
+![Exact autonomous gate validation](../../figures/validation/adaptive_v1_gate_validation_exact.png)
 
-for the autonomous adaptive estimator, a reduction of
+## Causal online Bayesian R0 update
 
-\[
-5.378\%.
-\]
+For the validated fast development condition:
 
-The corresponding squared-error reduction is approximately 10.5%.
+- first accepted update: **t = 2498 s**;
+- peak alpha_R0: **1.021276588 at t = 5578 s**;
+- last accepted update: **t = 9358 s**;
+- final alpha_R0: **1.018476993**;
+- total accepted updates: **50**.
 
-The physical plant/state-transition path is unchanged by the \(R_0\) adaptation.
+The plotted trajectory below is generated directly from the validated online-core trace.
 
-![Online Bayesian R0 update](../../figures/adaptive_r0_online_update.png)
+![Exact online R0 adaptation trace](../../figures/validation/adaptive_v1_r0_update_exact.png)
 
-## Autonomous-gate validation
+## Fast-condition voltage result
 
-Synthetic excitation periods on the fast side of the identified corner were classified as open:
+Over the 20–80% SOC analysis band:
 
-\[
-5,\ 7,\ 10,\ 15,\ 18,\ 20\ \mathrm{s},
-\]
+| Metric | Frozen EKF | Adaptive EKF |
+|---|---:|---:|
+| Posterior-voltage RMSE | 4.021863 mV | **3.805565 mV** |
+| Relative RMSE change | — | **−5.378%** |
+| Approx. squared-error reduction | — | **10.5%** |
+| Final alpha_R0 | 1.000000 | **1.018477** |
 
-while
+The physical plant/state-transition path remained unchanged.
 
-\[
-25,\ 40,\ 70,\ 700\ \mathrm{s}
-\]
+## Final real-condition A/B matrix
 
-were classified as closed.
+Nine real conditions were included:
 
-The 20-s synthetic case was detected at approximately 19.96 s.
-
-![Autonomous gate boundary](../../figures/autonomous_gate_boundary.png)
-
-## Real-condition A/B matrix
-
-Nine real conditions were used in the final matrix:
-
-- one fast periodic condition at approximately 0.144 Hz / 6.96 s;
-- three slow conditions around 0.0143 Hz / 70 s;
-- three slow conditions around 0.00143 Hz / 700 s;
-- one ultra-low-frequency condition at 0.000412 Hz / approximately 2427 s; and
+- one fast periodic development condition at approximately **0.144 Hz / 6.96 s**;
+- three periodic conditions around **0.0143 Hz / 70 s**;
+- three periodic conditions around **0.00143 Hz / 700 s**;
+- one ultra-low-frequency condition at **0.000412 Hz / approximately 2427 s**;
 - one constant-current discharge holdout.
 
-Only the fast condition enabled adaptation. All eight slow, ultra-low-frequency, or constant-current conditions remained gate-closed with zero Bayesian updates and \(\alpha_{R0}=1\).
+Only the fast condition enabled adaptation.
 
-Thus the adaptive architecture falls back numerically to the frozen EKF when the excitation gate is closed.
+All eight non-fast conditions remained gate-closed with:
 
-![Final real-condition matrix](../../figures/final_condition_matrix.png)
+- zero Bayesian updates;
+- `alpha_R0 = 1`;
+- unchanged plant outputs; and
+- numerical fallback to the frozen EKF.
 
-## Sensor-bias stress
+![Final real-condition A/B matrix](../../figures/final_condition_matrix.png)
 
-The final closed-loop architecture was also tested with synthetic measurement offsets:
+## Sensor-bias robustness
 
-\[
-b_I=\pm10,\ \pm20\ \mathrm{mA},
-\]
+The final closed-loop architecture was tested with synthetic measurement offsets:
 
-and
+- current: **±10 mA, ±20 mA**;
+- voltage: **±5 mV, ±10 mV**.
 
-\[
-b_V=\pm5,\ \pm10\ \mathrm{mV}.
-\]
+All nine cases, including the unbiased baseline, passed.
 
-All nine bias cases, including the unbiased baseline, passed the stated robustness checks. The maximum absolute shift in the final \(R_0\) multiplier relative to the unbiased case was approximately
+The maximum absolute final-alpha shift relative to the unbiased case was approximately:
 
-\[
-1.96\times10^{-4}.
-\]
+`1.96 × 10^-4`
 
-The largest update-count shift was one update.
+The largest update-count shift was **1**.
 
-These offsets are robustness stressors only; they are not estimated as augmented EKF states in the current architecture.
+These offsets are robustness stressors only. They are not augmented EKF states in v1.0.
 
 ![Sensor-bias robustness](../../figures/sensor_bias_robustness.png)
 
 ## Numerical-equivalence review
 
-The original automated final regression reported 8/9 real-condition passes because one gate-closed condition produced a maximum adaptive-minus-frozen SOC difference of
+The original automated final regression reported one real-condition failure only because the maximum adaptive-minus-frozen SOC difference in one gate-closed condition was:
 
-\[
-1.192\times10^{-9}\ \text{percentage points}
-\]
+`1.192 × 10^-9 percentage points`
 
-against an equality threshold of
+against an equality threshold of:
 
-\[
-1.0\times10^{-9}\ \text{percentage points}.
-\]
+`1.0 × 10^-9 percentage points`
 
 For that same condition:
 
-- gate-open fraction was zero;
-- update count was zero;
-- \(\alpha_{R0}=1\);
-- plant difference was zero; and
-- voltage-RMSE change was approximately \(6.3\times10^{-11}\%\).
+- gate-open fraction = 0;
+- update count = 0;
+- `alpha_R0 = 1`;
+- plant difference = 0;
+- posterior-voltage RMSE change ≈ `6.3 × 10^-11 %`.
 
-The discrepancy is floating-point noise. A reviewed numerical-equivalence tolerance of \(10^{-8}\) percentage points was used, corresponding to \(10^{-10}\) in absolute SOC fraction. The reviewed real-condition verdict is therefore 9/9 PASS.
+This is floating-point numerical noise rather than an algorithmic or physical difference.
+
+Using the reviewed numerical-equivalence tolerance of `1 × 10^-8 percentage points`, the final reviewed real-condition verdict is **9/9 PASS**.
 
 ## Claim boundaries
 
-The following limitations are part of the project result:
+The following limitations are part of the v1.0 result:
 
-1. **Independent fast-band generalization is not yet demonstrated.** The current adaptive estimator has been developed and validated on one available fast-band DC–AC condition (measured \(f\approx0.144\) Hz, \(T\approx6.96\) s). Additional fast-band frequencies and current amplitudes are required for independent validation.
+1. **Independent fast-band generalization is not yet demonstrated.** The only currently available fast development condition has measured frequency approximately **0.144 Hz** and period approximately **6.96 s**, and it participated in algorithm development.
 2. **The SOC reference is not independent ground truth.** The holdout reference is Coulomb-count based and uses the same reference-capacity convention.
-3. **The autonomous gate is not yet a general drive-cycle persistent-excitation detector.** It has been validated for the project's periodic/sinusoidal excitation family.
-4. **Unconditional all-timescale scalar-\(R_0\) adaptation is not supported.** Adaptation is enabled only behind the fast-excitation gate.
+3. **The autonomous gate is not yet a general drive-cycle persistent-excitation detector.** Validation is limited to the project's periodic/sinusoidal excitation family.
+4. **Unconditional all-timescale scalar-R0 adaptation is not supported.** Adaptation is enabled only behind the validated excitation gate.
 5. **Current and voltage offsets are not online estimated states** in v1.0.
 
 ## Next validation track
@@ -176,5 +160,5 @@ The following limitations are part of the project result:
 The next extension is deliberately separated from v1.0:
 
 1. independent additional fast-band DC–AC datasets;
-2. an oracle \(R_0\) performance-ceiling audit;
-3. only then, evidence-driven consideration of SOC-dependent \(R_0\) scaling, constrained \(R_1/\tau_1\) adaptation, or alternative state estimators.
+2. an oracle R0 performance-ceiling audit;
+3. only then, evidence-driven consideration of SOC-dependent R0 scaling, constrained fast-RC adaptation, or alternative state estimators.
