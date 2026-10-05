@@ -26,3 +26,7 @@
 # A8c archived CSV bytes are hashed; preserve their original line endings.
 results/validation/A8c/*.csv -text -eol whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 tools/verify_a8c_evidence.py text eol=lf
+
+# EXT1 archived evidence bytes are SHA-256 locked; preserve original line endings.
+results/extension_track1/*.csv -text -eol
+results/extension_track1/*.txt -text -eol

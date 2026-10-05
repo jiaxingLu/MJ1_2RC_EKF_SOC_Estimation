@@ -1,0 +1,59 @@
+MJ1 EXT1 K=4 Candidate Qualification Snapshot v1
+===============================================
+
+Status
+------
+Candidate: rolling Bayesian posterior, K=4 accepted windows
+Core: ope_r0_bayes_rolling_k4_core_v1.m
+Integrated model: MJ1_2RC_EKF_EXT1_K4_Integrated_v1.slx
+Frozen v1.0 remains unchanged.
+
+Passed implementation/system checks
+-----------------------------------
+- K=4 standalone core parity: PASS
+- synthetic gate-closed core fail-safe: PASS
+- native Simulink A/B/C integration parity: PASS
+- native gate-closed Frozen fallback equivalence: PASS
+- plant/state-transition invariance: PASS
+
+Sensor-bias evidence
+--------------------
+The original predeclared K=4 sensor-bias stress remains formally FAIL
+because EXT1_A at +/-20 mA produced update-count shifts of -2 against
+the predeclared |Delta N| <= 1 criterion. This result is not rewritten.
+
+Matched attribution subsequently showed:
+- the same update-count shifts occur in frozen v1.0 on the same A/B datasets;
+- K=4 materially amplifies internal final-alpha current-offset sensitivity;
+- the dominant mechanism is current-offset-induced shadow-SOC drift feeding
+  the nominal R0(SOC) LUT index;
+- protecting the R0-LUT SOC index in oracle diagnostics removes about 92-93%
+  of K=4 current-bias final-alpha sensitivity on A/B;
+- voltage-offset sensitivity of alpha remains numerically negligible.
+
+Output-impact interpretation
+----------------------------
+EXT1_A_02p03_fast
+  final-alpha sensitivity ratio K4/v1 = 11.118050 x
+  effective-R0 RMS sensitivity ratio K4/v1 = 1.456906 x
+  SOC RMS-shift ratio K4/v1 = 0.712074 x
+  Vhat RMS-shift ratio K4/v1 = 0.994966 x
+EXT1_B_03p04_fast
+  final-alpha sensitivity ratio K4/v1 = 6.667987 x
+  effective-R0 RMS sensitivity ratio K4/v1 = 1.448427 x
+  SOC RMS-shift ratio K4/v1 = 0.816128 x
+  Vhat RMS-shift ratio K4/v1 = 0.994100 x
+
+Interpretation:
+The enlarged alpha sensitivity is predominantly an internal parameterization/
+map-index compensation effect. It modestly amplifies effective-R0 sensitivity,
+but did not materially amplify SOC or posterior-voltage output sensitivity on
+the tested A/B current-offset stress cases.
+
+Claim boundary
+--------------
+- alpha_R0 must not be interpreted as an independently measured physical R0 drift,
+  especially under current-sensor offset.
+- K=4 is still a SHADOW/RELEASE CANDIDATE, not independently validated v1.1.
+- A/B/C are model-selection evidence for K=4 and cannot be reused as v1.1 holdout.
+- SOC consistency metrics are not independent SOC ground truth.

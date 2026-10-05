@@ -1,0 +1,4 @@
+Case,BlocksImprovedVsFrozen,BlocksImprovedVsV1,WorstBlockVsFrozen_pct,BestBlockVsFrozen_pct
+EXT1_A_02p03_fast,3,3,-1.59200027336967,-2.98893941797855
+EXT1_B_03p04_fast,3,3,-0.646994447452993,-3.62934111681334
+EXT1_C_02p08_fast_sensitivity,2,2,13.5106098531527,-7.89154251313401

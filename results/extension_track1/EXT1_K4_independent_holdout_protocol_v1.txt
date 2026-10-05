@@ -1,0 +1,58 @@
+MJ1 EXT1 K=4 Independent Holdout Protocol v1
+===========================================
+
+Protocol status
+---------------
+Prospective protocol frozen before viewing any new holdout performance result.
+K=4 architecture, prior, likelihood, gate, EKF Q/R/P0 and thresholds are fixed.
+No retuning is permitted after holdout performance is calculated.
+
+Already-used conditions (NOT eligible as K=4 independent holdout)
+---------------------------------------------------------------
+- v1.0 development: 0.3C+0.7C fast, ~0.144 Hz / ~6.96 s
+- EXT1_A: 0.2C+0.3C fast
+- EXT1_B: 0.3C+0.4C fast
+- EXT1_C: 0.2C+0.8C fast sensitivity case
+- any byte-identical, crop, timestamp-rewrite or processed/raw representation
+  of the same physical waveform is also ineligible.
+
+Holdout eligibility (checked before performance metrics)
+-------------------------------------------------------
+1. Source identity is not previously used in K=4 model selection or diagnosis.
+2. NGU201 current/voltage source is content-driven and provenance-reviewable.
+3. No missing I/V samples inside the formal analysis interval.
+4. A contiguous replay-ready interval covers the complete 20-80% SOC band.
+5. Sampling/timebase is compatible with native 1-s replay, without interpolation.
+6. The fixed autonomous gate identifies the condition as fast-band eligible;
+   gate behavior may be inspected before estimator performance, because the gate
+   is frozen and independent of voltage-estimation error.
+7. If the gate remains closed, the dataset is a fallback-equivalence test only,
+   not a fast-band independent-generalization holdout.
+
+Primary one-shot holdout decision criteria
+-----------------------------------------
+For an eligible fast-band holdout, K=4 PASS requires all of:
+A. plant/state-transition max absolute difference vs Frozen <= 1e-12 V;
+B. all alpha outputs finite and 0.70 <= alpha_R0 <= 1.30;
+C. K=4 posterior-voltage RMSE over 20-80% SOC <= Frozen RMSE;
+D. K=4 posterior-voltage RMSE over 20-80% SOC <= frozen-v1.0 adaptive RMSE;
+E. integrated K=4 update count/final alpha agree with standalone K=4 core replay
+   to numerical parity (alpha tolerance 5e-12; exact update count).
+
+Secondary metrics (reported, NOT pass/fail criteria)
+---------------------------------------------------
+- RMSE percentage change and squared-error change;
+- final/mean alpha_R0 and posterior SD;
+- update timing/count;
+- K=4 minus Frozen SOC trajectory differences;
+- Coulomb-count SOC consistency metrics, explicitly not ground truth;
+- gate fraction, measured period/frequency and excitation descriptors.
+
+Decision discipline
+-------------------
+- The first eligible holdout is evaluated once under this frozen protocol.
+- A FAIL is recorded as FAIL; criteria are not relaxed retrospectively.
+- Any algorithm change after seeing the holdout consumes that dataset as
+  development evidence; a subsequent release candidate then needs another holdout.
+- If no eligible untouched fast-band dataset exists, do not manufacture one by
+  reusing/cropping existing evidence; acquire a new experiment instead.

@@ -1,0 +1,117 @@
+MJ1 Adaptive 2RC-EKF | EXT1 K=4 Final Closeout Snapshot v1
+==========================================================
+
+1. Final status
+---------------
+EXT1 STATUS: CLOSED
+K=4 STATUS: FROZEN EXTENSION CANDIDATE
+RELEASE STATUS: NOT independently validated v1.1
+Frozen v1.0 remains unchanged.
+
+2. Candidate architecture
+-------------------------
+Rolling Bayesian posterior memory using the original prior plus the most
+recent K=4 accepted window likelihoods.
+Only posterior memory differs from frozen v1.0 cumulative memory.
+Gate, likelihood definition, EKF, Q/R/P0, plant/state transition and
+measurement-layer scalar-R0 adaptation structure remain unchanged.
+
+3. Positive evidence
+--------------------
+- standalone K=4 core parity: PASS
+- native Simulink integration parity: PASS
+- gate-closed negative fallback equivalence: PASS
+- plant/state-transition invariance: PASS
+- aggregate A performance vs Frozen: improved
+- aggregate B performance vs Frozen: improved
+- aggregate C sensitivity-case performance vs Frozen: improved
+- current-bias output-impact audit: enlarged internal alpha sensitivity did
+  not materially amplify SOC/Vhat output sensitivity on tested A/B cases.
+
+4. Preserved negative evidence
+-----------------------------
+- predeclared K=4 sensor-bias qualification remains FAIL; this verdict is
+  not relaxed retrospectively.
+- EXP_0037 is ineligible as independent holdout because the development
+  electrical sequence matches the archived raw physical run.
+- no untouched independent fast-band holdout remains available.
+- LOCO held-out pass count = 2/3.
+- when Case C is hidden, A+B select K=8 and the held-out C result is
+  +0.380896 % vs Frozen; held-out verdict = FAIL.
+- therefore K=4 selection materially depends on Case C as a stress constraint.
+
+5. SOC-local limitation
+----------------------
+Case C does not improve uniformly across SOC.
+All available Case-C bins beginning at >=55% SOC are degraded vs Frozen: 5/5.
+Worst Case-C fine-SOC bin: 60.00-65.00 % SOC, K4 vs Frozen = +45.590334 %.
+The aggregate Case-C improvement therefore masks sustained high-SOC local regression.
+
+6. Mechanistic interpretation
+----------------------------
+The evidence supports the following bounded mechanism:
+
+a) shortening posterior memory repairs the cumulative-memory failure at the
+   aggregate Case-C level but increases responsiveness to local shadow-model
+   identification targets.
+
+b) shadow-model alpha targets and EKF-useful conditional alpha targets are
+   not identical; this target mismatch is an architecture-level property and
+   is not unique to Case C.
+
+c) under high-amplitude Case C, sustained high-SOC regression appears because
+   realized correction energy can exceed the residual-cancellation benefit.
+   Exact per-bin residual-correction geometry supports this statement.
+
+55-60% SOC:
+  Frozen->K4 total SSE change = +67.405840 %
+  Frozen->K4-state alpha=1 SSE change = +91.698966 %
+  Interpretation: state-path degradation is material in this region.
+
+60-65% SOC:
+  Frozen->K4-state alpha=1 SSE change = -25.963102 %
+  alpha=1-state->K4 alpha-layer SSE change = +186.297048 %
+  Interpretation: the state path is beneficial, but the adaptive alpha layer
+  over-corrects strongly and reverses the benefit.
+
+65-70% SOC:
+  Frozen->K4-state alpha=1 SSE change = -26.756738 %
+  alpha=1-state->K4 alpha-layer SSE change = +44.110553 %
+  Interpretation: alpha-layer over-correction remains dominant.
+
+70-75% SOC:
+  Frozen->K4-state alpha=1 SSE change = -28.240856 %
+  alpha=1-state->K4 alpha-layer SSE change = +60.961221 %
+  Interpretation: alpha-layer over-correction remains dominant.
+
+7. Claim boundary
+----------------
+SUPPORTED:
+- K=4 is a reproducible rolling-memory extension candidate.
+- K=4 improves aggregate A/B and aggregate Case-C sensitivity performance
+  relative to Frozen on the current evidence set.
+- cumulative posterior memory was the dominant observed failure mechanism
+  behind the original Case-C aggregate regression.
+- high-SOC Case-C local regression is real and is mechanistically associated
+  with excessive realized correction energy, especially adaptive-alpha
+  over-correction over approximately 60-75% SOC.
+
+NOT SUPPORTED:
+- independent fast-band generalization of K=4;
+- universal SOC-local improvement;
+- universal cross-frequency / cross-temperature / cross-cell generalization;
+- interpreting alpha_R0 as an independently measured physical R0 drift;
+- declaring K=4 as independently validated v1.1.
+
+8. Development discipline
+-------------------------
+A/B/C and the v1.0 development condition are consumed development/model-selection evidence.
+Do not retune K, gate, prior, likelihood or EKF settings on these cases and then
+present the same cases as independent validation.
+Any future architecture modification creates a new candidate and requires a new
+prospectively defined validation protocol.
+
+9. Closeout artifacts
+---------------------
+Evidence manifest: EXT1_K4_closeout_evidence_manifest_v1.csv
+Snapshot: EXT1_K4_final_closeout_snapshot_v1.txt

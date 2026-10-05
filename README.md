@@ -9,7 +9,7 @@ This repository extends a frozen SOC-dependent 2RC Thevenin EKF baseline with tw
 
 The frozen state-transition model and RC dynamics remain unchanged.
 
-[Adaptive v1 validation](docs/validation/adaptive_v1_validation.md) · [Frozen-EKF validation](docs/validation/A8c_validation_report.md) · [Model-selection analysis](docs/validation/A8c_candidate_decision.md) · [Reproduction guide](docs/validation/A8c_reproduction.md)
+[Adaptive v1 validation](docs/validation/adaptive_v1_validation.md) · [K=4 extension closeout](docs/validation/ext1_k4_candidate_closeout.md) · [Frozen-EKF validation](docs/validation/A8c_validation_report.md) · [Model-selection analysis](docs/validation/A8c_candidate_decision.md) · [Reproduction guide](docs/validation/A8c_reproduction.md)
 
 ## Architecture
 
@@ -32,9 +32,9 @@ The adaptive layer changes only the ohmic-resistance contribution used by the EK
 
 When the gate is closed, `alpha_R0 = 1`, so the adaptive estimator falls back numerically to the frozen EKF.
 
-## Key result
+## Key v1.0 result
 
-The current v1.0 development condition is a fast periodic DC–AC excitation with measured frequency approximately **0.144 Hz** and period approximately **6.96 s**.
+The released v1.0 development condition is a fast periodic DC–AC excitation with measured frequency approximately **0.144 Hz** and period approximately **6.96 s**.
 
 | Metric | Frozen EKF | Autonomous adaptive EKF |
 |---|---:|---:|
@@ -44,9 +44,9 @@ The current v1.0 development condition is a fast periodic DC–AC excitation wit
 | Final alpha_R0 | 1.000000 | **1.018477** |
 | Accepted online updates | 0 | **50** |
 
-The adaptive layer therefore reduced the fast-condition posterior-voltage RMSE by **5.378%** while leaving the physical plant/state-transition path unchanged.
+The adaptive layer reduced the fast-condition posterior-voltage RMSE by **5.378%** while leaving the physical plant/state-transition path unchanged.
 
-## How adaptation works
+## How v1.0 adaptation works
 
 1. The measured current is analysed online by the excitation gate.
 2. Parameter learning is allowed only when the excitation satisfies the validated fast-excitation conditions.
@@ -56,9 +56,9 @@ The adaptive layer therefore reduced the fast-condition posterior-voltage RMSE b
 
 The gate uses a rolling current window, linear detrending, spectral concentration tests, a fast-branch frequency criterion, and open/close hysteresis. Full implementation details and exact validation plots are in the [Adaptive v1 validation report](docs/validation/adaptive_v1_validation.md).
 
-## Fail-safe behaviour
+## v1.0 fail-safe behaviour
 
-The final A/B matrix contains nine real conditions.
+The final v1.0 A/B matrix contains nine real conditions.
 
 | Condition family | Measured frequency / period | Gate | Online R0 update |
 |---|---|---|---|
@@ -78,18 +78,85 @@ Across all eight non-fast conditions:
 
 The reviewed final real-condition matrix is **9/9 PASS**.
 
-## Sensor-bias robustness
+## v1.0 sensor-bias robustness
 
-The final closed-loop architecture was stress-tested with:
+The released v1.0 architecture was stress-tested on its development dataset with:
 
 - current offsets: **±10 mA, ±20 mA**;
 - voltage offsets: **±5 mV, ±10 mV**.
 
-All nine cases, including the unbiased baseline, passed the stated robustness checks.
+All nine cases, including the unbiased baseline, passed the stated v1.0 robustness checks.
 
 The maximum absolute shift in final `alpha_R0` was approximately **1.96 × 10⁻⁴**, and the maximum update-count shift was **1**.
 
 Current and voltage offsets are robustness stressors in v1.0; they are not augmented EKF states.
+
+## Extension Track 1 — finite posterior memory
+
+Extension Track 1 investigated a failure of the frozen v1.0 cumulative Bayesian memory under an additional high-amplitude fast condition. The released v1.0 implementation was not modified.
+
+A rolling-posterior family with memory lengths `K = {1, 2, 4, 8, 16, 32}` accepted windows was evaluated. After inspecting the sweep, the extension selection rule was defined as:
+
+> choose the **largest finite K** that preserves plant invariance, does not degrade any current A/B/C case relative to the Frozen EKF, and does not degrade the formal A/B cases relative to the original v1.0 adaptive estimator.
+
+Under that **post-sweep, non-preregistered** rule, `K=4` was selected.
+
+### Aggregate K=4 evidence
+
+| Case | Role | K4 vs Frozen | K4 vs frozen v1.0 |
+|---|---|---:|---:|
+| A: 0.2C + 0.3C, fast band | Formal native case | **−1.917%** | **−0.518%** |
+| B: 0.3C + 0.4C, fast band | Formal native case | **−1.725%** | **−1.522%** |
+| C: 0.2C + 0.8C, fast band | Sensitivity-only case | **−0.403%** | **−2.094%** |
+
+The K=4 standalone core, integrated Simulink implementation, plant invariance, and gate-closed fail-safe behaviour all reached numerical parity with their corresponding reference calculations.
+
+### Evidence that prevents promotion to v1.1
+
+K=4 remains a **frozen extension candidate**, not an independently validated release.
+
+- The predeclared K=4 sensor-bias qualification remains **FAIL** because Case A at ±20 mA produced an update-count shift of −2 against the predefined `|ΔN| ≤ 1` criterion. Later diagnostics do not rewrite that verdict.
+- An archived raw 0.3C + 0.7C candidate (`EXP_0037`) was shown to contain the complete development electrical sequence sample-for-sample and is therefore not an independent physical holdout.
+- No untouched independent fast-band holdout remains available in the current archive.
+- Leave-one-condition-out selection stability is **2/3 PASS**. When Case C is hidden, A+B select `K=8`; that K degrades the held-out C condition by **+0.381%** versus Frozen.
+- Case C is sensitivity-only because its replay-ready record ends at approximately **78.07% SOC**, not the complete 20–80% band.
+
+### SOC-local limitation
+
+The aggregate Case-C improvement is not uniform across SOC. Five-percentage-point analysis shows sustained local degradation beginning around **55% SOC**:
+
+- 55–60%: **+29.39%** vs Frozen;
+- 60–65%: **+45.59%** vs Frozen;
+- 65–70%: **+2.74%** vs Frozen;
+- 70–75%: **+7.47%** vs Frozen;
+- 75–78.07%: **+40.74%** vs Frozen.
+
+The strongest local regression occurs at 60–65% SOC.
+
+### Mechanistic closeout
+
+A fixed-state conditional-alpha oracle shows that the high-SOC Case-C K=4 multiplier is systematically above the value that minimizes posterior-voltage error on the realized EKF state path. Over accepted windows at ≥55% SOC:
+
+- mean shadow-window alpha ≈ **1.01453**;
+- mean EKF conditional-oracle alpha ≈ **1.00031**;
+- mean shadow-minus-oracle divergence ≈ **+0.01422**;
+- **96.55%** of windows have shadow alpha above the EKF conditional oracle.
+
+This shadow-to-EKF target mismatch is **not unique to Case C**; related divergence is also present in A/B. Case C becomes problematic because the realized correction energy can exceed the residual-cancellation benefit.
+
+Exact per-bin SSE decomposition gives:
+
+`SSE_K4 − SSE_Frozen = 2 e_Frozenᵀ ΔV + ||ΔV||²`
+
+The cross term measures whether the correction cancels or reinforces the pre-existing residual; the quadratic term is the correction-energy cost. In Case C:
+
+- 55–60% SOC includes material state-path degradation;
+- approximately 60–75% SOC is dominated by alpha-layer over-correction that reverses otherwise beneficial state-path effects;
+- near 75–78% SOC both state-path and adaptive-layer contributions become unfavourable.
+
+These oracle and decomposition results are **diagnostic counterfactuals**, not independently validated controller redesigns.
+
+Full scope and evidence boundaries are documented in [EXT1 K=4 candidate closeout](docs/validation/ext1_k4_candidate_closeout.md).
 
 ## Frozen 2RC–EKF baseline
 
@@ -143,35 +210,38 @@ Historical tau-labels are retained only as dataset aliases. Public technical des
 | Directory | Contents |
 |---|---|
 | `data/` | Frozen model lookup tables and benchmark data |
-| `matlab/` | EKF equations, Jacobians, online Bayesian R0 updater, and autonomous excitation gate |
-| `model/` | Frozen plant/EKF models and final autonomous adaptive Simulink model |
-| `figures/validation/` | Detailed adaptive-v1 validation plots |
-| `docs/validation/` | Validation methods, results, evidence boundaries, and reproduction notes |
-| `results/adaptive_v1/` | Reviewed adaptive-v1 A/B and sensor-bias evidence |
+| `matlab/` | EKF equations, Jacobians, v1.0 Bayesian updater/gate, and the K=4 extension core |
+| `model/` | Frozen plant/EKF models, released v1.0 adaptive model, and K=4 extension-candidate model |
+| `figures/validation/` | Detailed validation plots |
+| `docs/validation/` | Validation methods, results, evidence boundaries, and extension closeout notes |
+| `results/adaptive_v1/` | Reviewed frozen-v1.0 A/B and sensor-bias evidence |
+| `results/extension_track1/` | K=4 model-selection, robustness, limitation, and mechanism evidence |
 | `results/validation/` | Archived frozen-EKF validation evidence |
 | `tools/` | Offline evidence-verification utilities |
 
 ## Current limitations
 
-**Independent fast-band generalization has not yet been demonstrated.**
+The evidence supports **same-frequency cross-amplitude transfer of frozen v1.0 on two independent native fast cases**, but **independent cross-frequency fast-band generalization has not been demonstrated**.
 
-The adaptive estimator has so far been developed and validated on one available fast periodic DC–AC condition with measured frequency approximately **0.144 Hz** and period approximately **6.96 s**. Additional fast-band frequencies and current amplitudes are required for independent validation.
+For the K=4 extension candidate, A/B/C are consumed development/model-selection evidence. No untouched independent fast-band holdout remains available in the current archive.
 
 Other scope boundaries:
 
 - the Coulomb-counting SOC reference is not independent SOC ground truth;
 - the autonomous gate is validated for the project's periodic/sinusoidal excitation family, not arbitrary automotive drive cycles;
+- K=4 does not provide uniform SOC-local improvement under the high-amplitude sensitivity case;
+- the K=4 predeclared sensor-bias qualification remains failed even though later output-impact attribution limits the engineering significance of that failure;
 - unconditional all-timescale scalar-R0 adaptation is not supported;
-- cross-cell and temperature generalization have not yet been demonstrated;
-- current and voltage biases are stress-tested but are not online estimated states in v1.0.
+- cross-cell and temperature generalization have not been demonstrated;
+- current and voltage biases are stressors, not online estimated states.
 
-## Next extension
+## Future work
 
-The next track is deliberately separated from v1.0:
+Extension Track 1 is closed without promotion to v1.1.
 
-1. independent additional fast-band DC–AC validation;
-2. an oracle R0 performance-ceiling audit;
-3. only then, evidence-driven consideration of SOC-dependent R0 scaling, constrained fast-RC parameter adaptation, or alternative state estimators.
+A future candidate should not be tuned further on the consumed v1.0/A/B/C evidence and then evaluated on the same cases as if they were independent validation. Any architectural change should define a new candidate and a new prospective validation protocol.
+
+The strongest next evidence would be an untouched fast-band experiment or external dataset that satisfies the frozen holdout protocol. Cross-frequency, temperature, and cross-cell evidence remain open.
 
 ## Author
 
