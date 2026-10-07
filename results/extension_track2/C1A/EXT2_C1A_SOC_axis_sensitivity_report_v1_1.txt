@@ -1,0 +1,37 @@
+MJ1 EXT2-C1A Full-Trajectory SOC-Axis Sensitivity Audit v1.1
+==========================================================
+
+No free qRef/SOC-shift optimization. Three pre-existing axes only.
+Development: exact 0.1C charge. Holdout: exact 1C full charge.
+
+C1 FROZEN_QREF parity max metric delta = 0 mV | PASS
+
+Axis summaries:
+FROZEN_QREF | frozen RMSE 23.165 | corrected RMSE 19.286 mV | imp 16.75 % | corrected bias +14.650 mV | centered 8.638 -> 12.543 mV | correction 28.90...47.44 mV
+NOMINAL_3P5 | frozen RMSE 13.758 | corrected RMSE 18.077 mV | imp -31.39 % | corrected bias +14.804 mV | centered 13.740 -> 10.372 mV | correction -7.29...24.87 mV
+SELF_NORMALIZED | frozen RMSE 18.295 | corrected RMSE 32.578 mV | imp -78.07 % | corrected bias +28.063 mV | centered 9.922 -> 16.546 mV | correction 33.29...57.37 mV
+
+SOC-bin corrected RMSE:
+FROZEN_QREF | 17-30% | 8.187 -> 35.558 mV | improvement -334.30 % | bias -8.018 -> +35.386 mV
+FROZEN_QREF | 30-50% | 19.651 -> 18.537 mV | improvement 5.67 % | bias -19.192 -> +16.249 mV
+FROZEN_QREF | 50-70% | 26.812 -> 11.386 mV | improvement 57.53 % | bias -26.628 -> +10.741 mV
+FROZEN_QREF | 70-85% | 28.640 -> 7.139 mV | improvement 75.07 % | bias -27.644 -> +3.067 mV
+NOMINAL_3P5 | 17-30% | 22.280 -> 26.397 mV | improvement -18.48 % | bias +21.745 -> +25.909 mV
+NOMINAL_3P5 | 30-50% | 5.211 -> 22.055 mV | improvement -323.23 % | bias +2.871 -> +19.730 mV
+NOMINAL_3P5 | 50-70% | 5.955 -> 12.535 mV | improvement -110.49 % | bias -5.731 -> +11.470 mV
+NOMINAL_3P5 | 70-85% | 17.791 -> 8.727 mV | improvement 50.95 % | bias -14.987 -> +5.220 mV
+SELF_NORMALIZED | 17-30% | 1.825 -> 56.943 mV | improvement -3020.91 % | bias +0.551 -> +56.877 mV
+SELF_NORMALIZED | 30-50% | 13.198 -> 30.985 mV | improvement -134.77 % | bias -12.545 -> +29.892 mV
+SELF_NORMALIZED | 50-70% | 20.548 -> 24.287 mV | improvement -18.20 % | bias -20.424 -> +24.135 mV
+SELF_NORMALIZED | 70-85% | 25.264 -> 13.174 mV | improvement 47.85 % | bias -23.908 -> +10.572 mV
+
+Best axis by corrected full RMSE = NOMINAL_3P5
+Full corrected-RMSE gain vs FROZEN_QREF = 6.271 %
+17-30% corrected-RMSE gain vs FROZEN_QREF = 9.162 mV
+Strong criterion = FAIL
+Partial criterion = FAIL
+Descriptive class = SOC_AXIS_MAPPING_NOT_PRIMARY
+
+Claim boundary:
+C1A is an SOC-axis sensitivity audit. SELF_NORMALIZED is not independent physical SOC ground truth. B1-2J remains HPPC_SOC_PROVENANCE_INCONCLUSIVE.
+No tested SOC axis is authorized as a replacement frozen-model axis by this audit alone.

@@ -1,0 +1,6 @@
+UnsafeOverclaim
+All 2RC parameters are estimated online.
+R2/tau2 adaptation is validated for real-time BMS use.
+The charging correction is proven electrochemical hysteresis.
+The HPPC SOC labels have been proven wrong.
+The model is validated across cells and temperatures.

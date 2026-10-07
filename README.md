@@ -9,8 +9,23 @@ This repository extends a frozen SOC-dependent 2RC Thevenin EKF baseline with tw
 
 The frozen state-transition model and RC dynamics remain unchanged.
 
-[Adaptive v1 validation](docs/validation/adaptive_v1_validation.md) · [K=4 extension closeout](docs/validation/ext1_k4_candidate_closeout.md) · [Frozen-EKF validation](docs/validation/A8c_validation_report.md) · [Model-selection analysis](docs/validation/A8c_candidate_decision.md) · [Reproduction guide](docs/validation/A8c_reproduction.md)
+Post-release extension tracks deliberately test whether additional estimator or adaptation complexity is justified; unsuccessful candidates and negative transfer results are retained as evidence rather than promoted.
 
+[Adaptive v1 validation](docs/validation/adaptive_v1_validation.md) · [K=4 extension closeout](docs/validation/ext1_k4_candidate_closeout.md) · [EXT2 dynamic-parameter qualification](docs/validation/ext2_dynamic_parameter_adaptation_closeout.md) · [Frozen-EKF validation](docs/validation/A8c_validation_report.md) · [Model-selection analysis](docs/validation/A8c_candidate_decision.md) · [Reproduction guide](docs/validation/A8c_reproduction.md)
+
+## Current qualification status
+
+| Component / candidate | Public status |
+|---|---|
+| Frozen SOC-dependent 2RC-EKF | Validated baseline |
+| Gated Bayesian `R0` adaptation | **Qualified within released v1.0 scope** |
+| EXT1 K=4 rolling posterior | Closed extension candidate; **not v1.1** |
+| Continuous `R1/tau1` adaptation | **Not qualified** |
+| Continuous `R2/tau2` adaptation | **Not qualified — closed** |
+| Simultaneous dynamic4 adaptation | **Not qualified** |
+| HPPC pulse+relaxation re-identification | Future event-based / batch candidate |
+
+EXT2's central result is that **identifiability does not automatically imply a transferable online adaptation target**.
 ## Architecture
 
 ```mermaid
@@ -158,6 +173,39 @@ These oracle and decomposition results are **diagnostic counterfactuals**, not i
 
 Full scope and evidence boundaries are documented in [EXT1 K=4 candidate closeout](docs/validation/ext1_k4_candidate_closeout.md).
 
+## Extension Track 2 — dynamic-parameter adaptation qualification
+
+Extension Track 2 investigated whether dynamic RC parameters beyond the released gated `R0` path should be adapted continuously online.
+
+The qualification parameterization was `theta = [R0, R1, tau1, R2, tau2]`, with `tau_i = R_i C_i`.
+
+### Parameter qualification
+
+- `R1/tau1`: **not qualified for continuous online adaptation**; practical information under the available periodic excitation was too weak for robust continuous estimation.
+- `R2/tau2`: synthetic recovery and practical identifiability were promising under suitable MID/SLOW excitation, but the measured optimum was not stable across SOC, frequency, and excitation amplitude. The continuous candidate is therefore **closed**.
+- simultaneous `R1/tau1/R2/tau2` adaptation: **not qualified**. Dedicated HPPC pulse+relaxation remains a future event-based / batch re-identification route.
+
+### Charging-baseline model-form evidence
+
+An independently derived low-rate charging-baseline correction improved **18/18** selected DC-AC validation windows: median RMSE **36.940 → 7.621 mV**, with **85.98%** median absolute-bias reduction.
+
+This is strong **condition-compatible model-form evidence**, not a universal charge-OCV correction or proof of electrochemical hysteresis.
+
+### Full-trajectory transfer
+
+Prospective evaluation on the historical 1C full-charge trajectory over approximately 17–85% SOC produced RMSE **23.165 → 19.286 mV** (**16.75%** improvement), while centered RMSE worsened **8.638 → 12.543 mV**. All seven prospective transfer gates failed.
+
+The correction is therefore **not promoted to a universal charge-direction OCV branch**.
+
+### SOC-axis and provenance audits
+
+C1A reproduced the FROZEN-QREF C1 result with **0 mV parity error**. The best alternate convention, `NOMINAL_3P5`, improved corrected full-trajectory RMSE over `FROZEN_QREF` by only **6.27%**. Final classification: `SOC_AXIS_MAPPING_NOT_PRIMARY`.
+
+Historical HPPC absolute-SOC provenance remains **INCONCLUSIVE**; the frozen LUT SOC nodes are not relocated.
+
+> **Identifiable does not necessarily mean transferable as an online adaptation target.**
+
+[Full EXT2 qualification closeout](docs/validation/ext2_dynamic_parameter_adaptation_closeout.md)
 ## Frozen 2RC–EKF baseline
 
 The adaptive architecture preserves the previously validated frozen estimator.
@@ -213,9 +261,11 @@ Historical tau-labels are retained only as dataset aliases. Public technical des
 | `matlab/` | EKF equations, Jacobians, v1.0 Bayesian updater/gate, and the K=4 extension core |
 | `model/` | Frozen plant/EKF models, released v1.0 adaptive model, and K=4 extension-candidate model |
 | `figures/validation/` | Detailed validation plots |
-| `docs/validation/` | Validation methods, results, evidence boundaries, and extension closeout notes |
+| `docs/validation/` | Validation methods, evidence boundaries, EXT1 closeout, and EXT2 dynamic-parameter qualification |
+| `scripts/extension_track2/` | Final reviewed EXT2 analysis-source snapshots; see its README for reproducibility boundaries |
 | `results/adaptive_v1/` | Reviewed frozen-v1.0 A/B and sensor-bias evidence |
 | `results/extension_track1/` | K=4 model-selection, robustness, limitation, and mechanism evidence |
+| `results/extension_track2/` | Curated EXT2 qualification summaries, reports, and diagnostic figures |
 | `results/validation/` | Archived frozen-EKF validation evidence |
 | `tools/` | Offline evidence-verification utilities |
 
@@ -235,14 +285,35 @@ Other scope boundaries:
 - cross-cell and temperature generalization have not been demonstrated;
 - current and voltage biases are stressors, not online estimated states.
 
+Additional EXT2 boundaries:
+
+- continuous dynamic RC adaptation beyond the released gated `R0` path is not qualified by the current evidence;
+- the B1-2H charging-baseline correction is local/condition-compatible rather than a universal OCV or hysteresis branch;
+- historical HPPC absolute-SOC provenance remains inconclusive;
+- SOC-axis convention is not the primary explanation of the C1 full-trajectory transfer failure; and
+- EXT2 remains based on the same historical single-cell evidence family; cross-cell and temperature generalization remain untested.
 ## Future work
 
 Extension Track 1 is closed without promotion to v1.1.
 
-A future candidate should not be tuned further on the consumed v1.0/A/B/C evidence and then evaluated on the same cases as if they were independent validation. Any architectural change should define a new candidate and a new prospective validation protocol.
+The historical-data EXT2 dynamic-parameter qualification track is also closed. Continuous `R2/tau2` adaptation is not promoted from the current evidence.
 
-The strongest next evidence would be an untouched fast-band experiment or external dataset that satisfies the frozen holdout protocol. Cross-frequency, temperature, and cross-cell evidence remain open.
+The v1.0 development case and EXT1 A/B/C cases remain consumed development/model-selection evidence. They should not be retuned and reused as if they were independent validation.
 
+The same discipline now applies to EXT2: the historical single-cell archive should not be mined repeatedly for new post-hoc correction forms and then reused as nominally independent proof of those corrections.
+
+Dynamic-parameter adaptation should be reopened only with new controlled evidence, preferably including:
+
+- multiple fresh LG INR18650 MJ1 cells;
+- controlled chamber temperature;
+- continuous authoritative current logging;
+- explicit full and empty SOC anchors;
+- low-rate charge and discharge OCV characterization;
+- multiple C-rate full trajectories;
+- a new HPPC pulse+relaxation campaign; and
+- at least one independent holdout cell.
+
+Cross-frequency, temperature, cross-cell, and independent fast-band generalization therefore remain open research questions.
 ## Author
 
 **Jiaxing Lu** — battery testing, modelling, diagnostics, and BMS-oriented state estimation.

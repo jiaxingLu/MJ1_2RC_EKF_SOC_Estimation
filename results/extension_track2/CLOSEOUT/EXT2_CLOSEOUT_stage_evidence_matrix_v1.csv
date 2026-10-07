@@ -1,0 +1,14 @@
+Stage,Status,KeyEvidence,Decision
+B1-1,PASS,738 matched synthetic cases; max cond(J)=8.95,Synthetic recoverability only
+B1-2A,PASS,18 SOC/state windows ready,Proceed to measured-data qualification
+B1-2B,FAIL,Measured R2/tau2 targets fail cross-condition consistency,Do not implement continuous adaptation
+B1-2C,DIAGNOSTIC,Baseline bias dominates measured-voltage error,Treat baseline/model-form as confounder
+B1-2D,DIAGNOSTIC,Effective qRef=3.64182 Ah reduces bias but is confounded,Do not reinterpret effective qRef as physical capacity
+B1-2E,DIAGNOSTIC,Independent capacities do not support 3.64182 Ah as physical capacity,Reject physical-capacity explanation
+B1-2F,DIAGNOSTIC,Charge/discharge pseudo-OCV shows rate/history/direction dependence,Do not label baseline correction equilibrium hysteresis
+B1-2G,DIAGNOSTIC,Directionality robust across tested SOC-axis conventions,SOC-axis alone cannot explain directionality
+B1-2H,PASS_LOCAL_WINDOW,18/18 DC-AC windows improve; median RMSE 36.940->7.621 mV,Retain only as condition-compatible local/window evidence
+B1-2I,FAIL,R2/tau2 target inconsistency remains after baseline control,R2/tau2 continuous candidate CLOSED
+B1-2J,INCONCLUSIVE,Absolute HPPC SOC provenance cannot be closed to a physical anchor,Do not relocate frozen LUT SOC nodes
+C1,FAIL_PARTIAL_SUPPORT,1C full trajectory RMSE 23.165->19.286 mV; all 7 gates fail,Do not promote correction to universal charge OCV branch
+C1A,CLOSED_DIAGNOSTIC,C1 parity 0 mV; SOC-axis mapping not primary,Close SOC-axis explanation as non-primary

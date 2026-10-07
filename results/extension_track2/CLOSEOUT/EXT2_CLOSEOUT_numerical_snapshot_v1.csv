@@ -1,0 +1,14 @@
+Metric,Value
+B1-2H windows improved,18/18
+B1-2H median frozen RMSE mV,36.940
+B1-2H median corrected RMSE mV,7.621
+B1-2H median bias reduction pct,85.98
+C1 frozen full RMSE mV,23.165370
+C1 corrected full RMSE mV,19.285928
+C1 full RMSE improvement pct,16.746731
+C1 frozen centered RMSE mV,8.637977
+C1 corrected centered RMSE mV,12.543210
+C1A parity max delta mV,0
+C1A best tested axis,NOMINAL_3P5
+C1A full gain vs FROZEN_QREF pct,6.270988
+C1A low-SOC gain vs FROZEN_QREF mV,9.161611

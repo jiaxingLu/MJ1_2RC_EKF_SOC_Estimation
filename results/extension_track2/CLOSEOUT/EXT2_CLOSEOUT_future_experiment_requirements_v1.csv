@@ -1,0 +1,9 @@
+Priority,Requirement,Rationale
+1,Multiple fresh LG MJ1 cells,Separate single-cell history from transferable behavior
+2,Controlled chamber temperature,Remove temperature as uncontrolled resistance/kinetics confounder
+3,Continuous authoritative NGU201 current logging,Prevent missing-current gaps that blocked absolute SOC provenance
+4,Explicit full and empty SOC anchors,Make physical SOC traceable
+5,Charge/discharge low-rate OCV characterization,Separate rate/history/direction effects from equilibrium-like baseline
+6,Multiple C-rate full trajectories,Test rate dependence of baseline and dynamic residuals
+7,New HPPC pulse+relaxation campaign,Support event-based re-ID under well-conditioned transients
+8,Independent holdout cell,Prevent repeated development on one cell from masquerading as independent validation

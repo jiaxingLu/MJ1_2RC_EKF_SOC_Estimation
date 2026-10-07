@@ -1,0 +1,37 @@
+MJ1 EXT2-B1-2H Independent Charge-Branch OCV Validation v1.2
+===========================================================
+
+Development source: exact SHA-locked raw 0.1C charge only.
+Validation targets: six DC-AC profiles / 18 B1-2A windows.
+No DC-AC voltage used to fit the correction.
+
+Correction curve:
+SOC nodes = 69
+correction range = 28.902 ... 47.438 mV
+max adjacent-node jump = 3.156 mV
+
+Validation aggregate:
+improved windows = 18 / 18
+median nominal RMSE = 36.939903 mV
+median corrected RMSE = 7.621348 mV
+median RMSE improvement = 30.792369 mV / 80.071 %
+median nominal |bias| = 36.413368 mV
+median corrected |bias| = 5.105965 mV
+median |bias| reduction = 85.978 %
+median nominal centered RMSE = 2.404353 mV
+median corrected centered RMSE = 2.531628 mV
+centered RMSE median change = +0.127275 mV
+
+Prospective gates:
+>=15/18 windows improve = PASS
+median RMSE reduction >=50% = PASS
+median corrected RMSE <=10 mV = PASS
+median |bias| reduction >=75% = PASS
+median corrected |bias| <=10 mV = PASS
+centered median increase <=2 mV = PASS
+
+INDEPENDENT CHARGE OCV SUPPORT = PASS
+Descriptive class = INDEPENDENT_CHARGE_DIRECTION_OCV_CORRECTION_SUPPORTED
+
+Claim boundary:
+A PASS supports a direction-dependent OCV/baseline model-form candidate on these historical data. It is not an equilibrium hysteresis identification and does not reopen R2/tau2 online adaptation.

@@ -1,0 +1,29 @@
+MJ1 EXT2 — Dynamic-Parameter Adaptation Qualification Closeout v1
+================================================================
+
+FINAL DISPOSITION
+- R0: QUALIFIED within gated Bayesian v1.0 scope.
+- R1/tau1: NOT qualified for continuous online adaptation.
+- R2/tau2: NOT qualified; continuous candidate CLOSED.
+- Dynamic4: NOT qualified for simultaneous continuous adaptation.
+- HPPC pulse+relaxation: future event-based / batch re-identification candidate only.
+- Charge-baseline correction: condition-compatible local/window evidence only.
+- SOC-axis remapping: NOT PRIMARY explanation of C1 failure.
+
+C1 full RMSE: 23.165 -> 19.286 mV
+C1 centered RMSE: 8.638 -> 12.543 mV
+C1A parity max delta: 0 mV
+C1A best tested axis: NOMINAL_3P5
+C1A class: SOC_AXIS_MAPPING_NOT_PRIMARY
+
+FINAL CLAIM BOUNDARY
+Only gated R0 adaptation is qualified among the evaluated online adaptation targets under the current evidence.
+R2/tau2 is identifiable under useful excitation but not a stable transferable measured-data target.
+The low-rate charge-baseline correction is not a universal OCV or proven hysteresis branch.
+HPPC absolute SOC provenance remains inconclusive.
+
+STOP RULE
+Do not continue post-hoc correction mining on the same historical single-cell dataset.
+Next high-value step: controlled multi-cell experiments with temperature control, continuous current logging, explicit SOC anchors, low-rate charge/discharge OCV, multiple C-rates, new HPPC, and an independent holdout cell.
+
+Protected assets unchanged: PASS

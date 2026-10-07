@@ -1,0 +1,7 @@
+Candidate,ContinuousOnline,EventBasedOrDiagnostic,Reason
+R0,QUALIFIED_WITHIN_GATED_BAYESIAN_V1_SCOPE,EXISTING_RELEASED_SCOPE,Existing gated Bayesian R0 adaptation passed released-scope validation
+R1 + tau1,NOT_QUALIFIED,PULSE_CALIBRATION_CANDIDATE_ONLY,Periodic signal too weak for robust continuous R1/tau1 estimation
+R2 + tau2,NOT_QUALIFIED_CLOSED,EVENT_BASED_REIDENTIFICATION_CANDIDATE_ONLY,Identifiable but measured optimum is non-transferable across SOC/frequency/amplitude
+R1 + tau1 + R2 + tau2,NOT_QUALIFIED,HPPC_BATCH_REID_CANDIDATE_ONLY,Joint dynamic4 geometry poor under ordinary waveform; HPPC helps only dedicated event identification
+Charge-baseline correction,NOT_AN_ONLINE_PARAMETER_TARGET,CONDITION_COMPATIBLE_MODEL_FORM_EVIDENCE_ONLY,Strong local transfer but incomplete 1C full-trajectory transfer
+SOC-axis remapping,NOT_JUSTIFIED_AS_MODEL_REPLACEMENT,SENSITIVITY_ONLY,C1A alternate pre-existing axes do not recover transfer

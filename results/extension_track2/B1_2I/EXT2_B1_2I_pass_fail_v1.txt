@@ -1,0 +1,37 @@
+MJ1 EXT2-B1-2I Confounder-Controlled R2/tau2 Target Re-Audit v1
+========================================================
+
+Offline confounder-controlled measured-voltage shadow re-audit only.
+B1-2H charge OCV correction is frozen; no online adaptation and no frozen-model modification.
+
+alpha grid = 0.700 ... 1.300, step 0.005
+amplitude consistency tol = 0.100
+frequency consistency tol = 0.100
+SOC smoothness tol = 0.150
+abs-vs-centered tol = 0.100
+max cond(J) = 20.000
+
+B1-2H nominal-baseline parity max |delta RMSE| = 8.17124146e-14 mV
+B1-2H nominal-baseline parity = PASS
+
+Finite optimum/geometry         = PASS
+No boundary-risk optimum        = FAIL
+Local geometry                  = PASS
+Absolute-vs-centered robustness = FAIL
+Amplitude consistency           = FAIL
+Frequency consistency           = FAIL
+SOC smoothness                  = FAIL
+Raw-SOC safe-start/history      = PASS
+Protected assets unchanged      = PASS
+
+TARGET CONSISTENCY B1-2I       = FAIL
+
+Median RMSE improvement         = 3.849688 mV
+Median relative improvement     = 55.686120 %
+MATERIAL BENEFIT               = PASS
+
+R2/TAU2 CANDIDATE REOPEN                 = FAIL
+
+Decision: confounder-controlled R2/tau2 target remains inconsistent; keep R2/tau2 adaptation closed.
+
+Claim boundary: confounder-controlled target consistency only. Even if candidateReopen=PASS, a new shadow-only prototype and independent validation are required before any online-adaptation claim.

@@ -1,0 +1,6 @@
+SafeClaim
+"Developed and validated SOC estimation using a SOC-dependent 2RC Thevenin model and EKF for LG MJ1 data."
+"Implemented gated Bayesian online R0 adaptation while preserving the frozen plant/EKF architecture."
+"Qualified dynamic-parameter adaptation targets through synthetic recovery, identifiability, real-voltage consistency and confounder-controlled holdout tests."
+"Rejected continuous R2/tau2 adaptation because the measured target was not transferable across operating conditions."
+"Demonstrated a condition-compatible charging-baseline correction with strong local transfer but limited full-trajectory generalization."

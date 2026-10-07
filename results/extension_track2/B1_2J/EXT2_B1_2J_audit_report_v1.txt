@@ -1,0 +1,52 @@
+EXT2-B1-2J — HPPC SOC-Label Provenance & Independent Re-Alignment Audit
+AUDIT ONLY / STOP AFTER DELIVERY
+HPPC primary source root: <LOCAL_DATA_ROOT>\HPPC_primary_source_提取
+HPPC pulse files found: 20 physical (9 CSV + 11 REC), 11 logical pulses
+SOC transition files found: 10 physical (5 CSV + 5 REC), 5 logical transitions
+Other provenance files found in primary: 2 NGU201 LOG; no DOCX/XLSX/formula source
+Supporting document/script/workbook files inspected: 26
+Files with exact SHA identity: 32 inventoried; user-provided NGU hashes 2/2 PASS; primary/secondary byte duplicates 0
+REC/CSV metadata identity agreement: 14/14 (not byte identity)
+NGU valid segments: charge-day 17; discharge-day 7
+Chronology links (all link types): {'HIGH': 13, 'MEDIUM': 13, 'LOW': 4, 'REJECTED': 1, 'NOT_RECONSTRUCTABLE': 1}
+DAS/REC-to-NGU pairings: {'HIGH': 13, 'MEDIUM': 2, 'LOW': 0, 'REJECTED': 0, 'NOT_RECONSTRUCTABLE': 1}
+
+HPPC pulse SOC reconstruction (frozen 3.335 Ah basis; other bases also saved):
+19.4% | discharge | filename=19.4% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=NOT_RECONSTRUCTABLE
+34.4% | discharge | filename=34.4% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=MEDIUM
+34.4% | charge | filename=34.4% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=MEDIUM
+43.7% | discharge | filename=43.7% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=HIGH
+43.7% | charge | filename=43.7% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=HIGH
+52.2 (transition label 52.5)% | discharge | filename=52.2% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=HIGH
+52.2 (transition label 52.5)% | charge | filename=52.2% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=HIGH
+74.0% | discharge | filename=74.0% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=HIGH
+74.0% | charge | filename=74.0% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=HIGH
+99 (transition label 100)% | discharge | filename=99.0% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=HIGH
+99 (transition label 100)% | charge | filename=99.0% | reconstructed=UNKNOWN | Delta SOC=UNKNOWN | confidence=NOT_RECONSTRUCTABLE | event link=HIGH
+
+Exact reconstructed absolute SOC nodes: 0
+Partially reconstructed absolute SOC nodes: 0
+Unresolved absolute SOC nodes: 6
+Partial event/current provenance: 5 label groups; 10/11 pulse records paired (does not count as absolute SOC reconstruction)
+median Delta SOC pp: N/A
+mean Delta SOC pp: N/A
+min/max Delta SOC pp: N/A
+stable positive SOC shift = NO (not established; absence is not proven)
+Magnitude consistent with +3.8 to +5.6 pp = INCONCLUSIVE
+Outcome group: D — most nodes cannot be reconstructed
+Frozen OCV provenance: PARTIAL / FROZEN_OCV_PROVENANCE_NOT_FULLY_RECONSTRUCTED
+Descriptive class: HPPC_SOC_PROVENANCE_INCONCLUSIVE
+Protected assets unchanged = PASS (1199 protected files)
+
+NGU transition integrals and Qref=3.335 Ah recorded-segment delta (not complete node-to-node SOC):
+SOC19.4到SOC34.4.csv | CHG_003 | Q=0.029276412 Ah | delta=0.877853 pp | filename delta=15.0 pp
+SOC34.4到SOC43.7.csv | CHG_006 | Q=0.062331019 Ah | delta=1.868996 pp | filename delta=9.3 pp
+SOC43.7到SOC52.5.csv | CHG_009 | Q=0.165271402 Ah | delta=4.955664 pp | filename delta=8.8 pp
+SOC52.2到SOC74.csv | CHG_012 | Q=1.397313154 Ah | delta=41.898445 pp | filename delta=21.8 pp
+SOC74到SOC100.csv | CHG_015 | Q=1.565647519 Ah | delta=46.945953 pp | filename delta=26.0 pp
+
+Only within continuous CHG_015, the project full anchor gives segment-start SOC 52.205–55.267% over the five fixed Qrefs. This is not reconstructed SOC at the preceding 74% pulse.
+Historical tables and several pulse labels are compatible with a linear voltage coordinate, but the original HPPC label formula is still UNKNOWN.
+R2/tau2 continuous online adaptation remains CLOSED. No LUT correction, node relocation, refit, EKF rebuild, Git commit or push.
+STOP.
+Audit validation = PASS (99 checks, 0 failed)

@@ -1,0 +1,6 @@
+Category,Level,N,MedianNominalRMSE_mV,MedianCorrectedRMSE_mV,MedianImprovement_pct,MedianCorrectedAbsBias_mV,ImprovedWindows
+AmplitudeGroup,A,0,NaN,NaN,NaN,NaN,0
+AmplitudeGroup,B,0,NaN,NaN,NaN,NaN,0
+AmplitudeGroup,DEV,0,NaN,NaN,NaN,NaN,0
+Band,MID,9,37.6755076891664,5.84880066770348,84.3321464719695,5.38069837987017,9
+Band,SLOW,9,36.0767083138598,7.83545966049136,79.0853503130365,4.83123108504432,9

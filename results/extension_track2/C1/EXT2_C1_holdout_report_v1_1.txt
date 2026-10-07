@@ -1,0 +1,51 @@
+MJ1 EXT2-C1 Full-Trajectory Charge-Baseline Holdout v1.1
+======================================================
+
+Development correction: B1-2H exact 0.1C charge.
+Holdout: exact 1C_full_charge.csv.
+Independent with respect to correction-curve development; not globally unseen.
+
+Holdout source SHA256 = 9df6afbf73b78742e0449803d8f2eae8e9506583b5ff2f5161fabc65934d72f2
+terminal anchor V/I = 4.200172000 V / 0.049971630 A
+terminal-anchor throughput = 3.383878166 Ah
+evaluated SOC support = 17.026629 ... 84.999270 %
+
+Full trajectory:
+Frozen RMSE = 23.165370 mV
+Corrected RMSE = 19.285928 mV
+RMSE improvement = 16.747 %
+Frozen MAE = 21.494644 mV
+Corrected MAE = 15.579450 mV
+MAE improvement = 27.519 %
+Frozen mean bias = -21.494644 mV
+Corrected mean bias = +14.649740 mV
+Frozen centered RMSE = 8.637977 mV
+Corrected centered RMSE = 12.543210 mV
+Centered-RMSE change = +3.905233 mV
+
+SOC-bin validation:
+SOC_17to30 | RMSE 8.187 -> 35.558 mV | improvement -334.30 % | bias -8.018 -> +35.386 mV | improved=NO
+SOC_30to50 | RMSE 19.651 -> 18.537 mV | improvement 5.67 % | bias -19.192 -> +16.249 mV | improved=YES
+SOC_50to70 | RMSE 26.812 -> 11.386 mV | improvement 57.53 % | bias -26.628 -> +10.741 mV | improved=YES
+SOC_70to85 | RMSE 28.640 -> 7.139 mV | improvement 75.07 % | bias -27.644 -> +3.067 mV | improved=YES
+
+CC/CV diagnostic:
+CV start found = YES
+detected CV-start SOC = 76.197 %
+
+Prospective gates:
+G1 RMSE reduction >=50% = FAIL
+G2 corrected RMSE <=10 mV = FAIL
+G3 MAE reduction >=50% = FAIL
+G4 corrected |mean bias| <=10 mV = FAIL
+G5 all 4 SOC bins improve = FAIL
+G6 max corrected bin RMSE <=15 mV = FAIL
+G7 centered-RMSE increase <=2 mV = FAIL
+
+EXT2-C1 PASS = FAIL
+Descriptive class = PARTIAL_FULL_TRAJECTORY_TRANSFER_SUPPORT
+
+Claim boundary:
+C1 tests transfer of an independently developed charging-baseline correction on one historical 1C full-charge trajectory. It does not establish equilibrium hysteresis, HPPC SOC provenance, cross-temperature/cross-cell generalization, or production readiness.
+B1-2J remains HPPC_SOC_PROVENANCE_INCONCLUSIVE.
+R2/tau2 continuous adaptation remains CLOSED.
